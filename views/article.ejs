@@ -1,0 +1,14 @@
+<%- include("layout", { pageTitle, body: `
+  <article>
+    <h1>${post.title}</h1>
+    <link rel="stylesheet" href="/public/theme.css">
+    <div class="muted small">
+      อัปเดต: ${new Date(post.updated_at).toLocaleDateString("th-TH")}
+      • แท็ก: ${(post.tags || "").replaceAll(",", ", ")}
+    </div>
+    <hr style="border:0;border-top:1px solid rgba(255,255,255,.10); margin: 12px 0;" />
+    <div class="content">
+      ${post.content_html}
+    </div>
+  </article>
+` }) %>

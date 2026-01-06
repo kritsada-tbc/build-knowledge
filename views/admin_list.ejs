@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= pageTitle || "จัดการโพสต์" %></title>
+  <style>
+    :root{ --bg:#0b1220; --text:#e7eefc; --muted:#97a3b6; --line: rgba(255,255,255,.10); --radius:14px; }
+    *{ box-sizing:border-box; }
+    body{ margin:0; padding:18px; font-family: ui-sans-serif, system-ui, "Noto Sans Thai", Arial;
+      color:var(--text);
+      background: linear-gradient(180deg, #070c17, var(--bg)); }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width: 1100px; margin:0 auto; }
+    .btn{ padding:10px 12px; border:1px solid var(--line); border-radius:12px; background: rgba(255,255,255,.03); display:inline-flex; cursor:pointer; }
+    .btn:hover{ background: rgba(255,255,255,.06); }
+    .btn.primary{ border-color: rgba(74,163,255,.35); }
+    .row{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
+    .card{ border:1px solid var(--line); border-radius:var(--radius); background: rgba(255,255,255,.03); padding:14px; margin-top:12px; }
+    table{ width:100%; border-collapse: collapse; margin-top:12px; }
+    th,td{ border-bottom:1px solid var(--line); padding:10px 8px; text-align:left; }
+    th{ color:var(--muted); font-weight:600; font-size:12px; }
+    td{ font-size:13px; }
+    .small{ color:var(--muted); font-size:12px; }
+    .tag{ padding:6px 9px; border:1px solid var(--line); border-radius:999px; font-size:11px; color:var(--muted); }
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="row">
+      <div>
+        <h1 style="margin:0;"><%= pageTitle || "จัดการโพสต์" %></h1>
+        <div class="small"><a href="/">ดูหน้าเว็บ</a></div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="/admin/posts?type=article">บทความ</a>
+        <a class="btn" href="/admin/posts?type=material">วัสดุ</a>
+        <a class="btn" href="/admin/posts?type=tool">เครื่องมือ</a>
+        <a class="btn" href="/admin/posts?type=dealer">แหล่งซื้อ</a>
+        <a class="btn" href="/admin/messages">ข้อความติดต่อ</a>
+        <a class="btn" href="/admin/ui">ตั้งค่า UI</a>
+        <form method="post" action="/admin/logout" style="margin:0;">
+          <button class="btn" type="submit">ออกจากระบบ</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <b>ประเภทปัจจุบัน:</b> <span class="tag"><%= type || "article" %></span>
+          <div class="small">เพิ่ม/แก้ไข/เผยแพร่ ได้จากหน้านี้</div>
+        </div>
+        <a class="btn primary" href="/admin/posts/new?type=<%= type || 'article' %>">+ เพิ่มรายการ</a>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ชื่อ</th>
+            <th>slug</th>
+            <th>สถานะ</th>
+            <th>อัปเดตล่าสุด</th>
+            <th>จัดการ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (!posts || posts.length===0) { %>
+            <tr><td colspan="5" class="small">ยังไม่มีข้อมูล</td></tr>
+          <% } else { posts.forEach(p => { %>
+            <tr>
+              <td><b><%= p.title %></b></td>
+              <td class="small"><%= p.slug %></td>
+              <td><span class="tag"><%= p.is_published ? "เผยแพร่" : "ร่าง" %></span></td>
+              <td class="small"><%= p.updated_at ? new Date(p.updated_at).toLocaleString("th-TH") : "-" %></td>
+              <td>
+                <div class="actions">
+                  <a class="btn" href="/admin/posts/<%= p.id %>/edit">แก้ไข</a>
+                  <form method="post" action="/admin/posts/<%= p.id %>/delete" style="margin:0;" onsubmit="return confirm('ลบรายการนี้?');">
+                    <button class="btn" type="submit">ลบ</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

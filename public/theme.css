@@ -1,0 +1,83 @@
+:root{
+  --bg:#ffffff;
+  --card:#f7fafc;
+  --text:#0f172a;
+  --muted:#475569;
+  --line:#dbe3ef;
+
+  /* โทนทางการ น้ำเงิน */
+  --accent:#1d4ed8;
+  --accent2:#0b2a6f;
+
+  --shadow: 0 10px 22px rgba(2,6,23,.08);
+  --radius: 16px;
+  --max: 1140px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", "Helvetica Neue", Arial;
+  color:var(--text);
+  background:var(--bg);
+  line-height:1.55;
+}
+
+a{ color:inherit; text-decoration:none; }
+.container{ max-width:var(--max); margin:0 auto; padding: 0 18px; }
+
+/* Topbar แบบทางการ */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--accent);
+}
+.nav{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 0; }
+
+.logo{
+  width:36px;height:36px;border-radius:10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color:#fff;
+  display:grid; place-items:center;
+  font-weight:900;
+  box-shadow: 0 8px 18px rgba(29,78,216,.18);
+}
+
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  cursor:pointer;
+}
+.btn.primary{
+  background: var(--accent);
+  border-color: var(--accent);
+  color:#fff;
+}
+.btn:hover{ filter: brightness(.98); }
+
+/* Card / กล่อง */
+.card, .tool, .hero-card{
+  border:1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+/* ปิดเอฟเฟกต์เรืองๆ (ถ้ามีในหน้าไหน) */
+.hero-card::before{ display:none !important; }
+
+/* Input */
+.input, input, textarea{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px 12px;
+  background:#fff;
+  color:var(--text);
+  outline:none;
+}

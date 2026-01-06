@@ -1,0 +1,66 @@
+<% const SITE = (typeof site !== "undefined" && site) ? site : {}; %>
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/public/theme.css">
+  <title><%= pageTitle %> • <%= (SITE.site_name || "ศูนย์ความรู้วัสดุก่อสร้าง") %></title>
+  <style>
+    :root{
+      --bg:#0b1220; --text:#e7eefc; --muted:#97a3b6; --line: rgba(255,255,255,.10);
+      --accent:<%= (SITE.theme_accent || "#4aa3ff") %>;
+      --accent2:<%= (SITE.theme_accent2 || "#7c5cff") %>;
+      --radius:16px; --max:1100px;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family: ui-sans-serif, system-ui, "Noto Sans Thai", Arial; color:var(--text);
+      background: linear-gradient(180deg, #070c17, var(--bg)); }
+    a{ color:inherit; text-decoration:none; }
+    .container{ max-width:var(--max); margin:0 auto; padding: 18px 16px; }
+    .btn{ padding:10px 12px; border:1px solid var(--line); border-radius:12px; background: rgba(255,255,255,.03); display:inline-flex; }
+    .btn:hover{ background: rgba(255,255,255,.06); }
+    .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:12px; margin-top: 14px; }
+    .card{ grid-column: span 4; border:1px solid var(--line); border-radius:var(--radius); padding:14px; background: rgba(255,255,255,.03); }
+    .card h3{ margin:0 0 6px; font-size:15px; }
+    .card p{ margin:0; color: var(--muted); font-size: 13px; }
+    .meta{ margin-top:10px; color:var(--muted); font-size:12px; }
+    @media (max-width: 920px){ .card{ grid-column: span 6; } }
+    @media (max-width: 560px){ .card{ grid-column: span 12; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+      <div>
+        <h1 style="margin:0;"><%= pageTitle %></h1>
+        <div style="color:var(--muted); font-size:12px;">
+          <a href="/">← กลับหน้าแรก</a>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+        <a class="btn" href="/articles">บทความ</a>
+        <a class="btn" href="/materials">วัสดุ</a>
+        <a class="btn" href="/tools">เครื่องมือ</a>
+        <a class="btn" href="/dealers">แหล่งซื้อ</a>
+        <a class="btn" href="/contact">ติดต่อ</a>
+      </div>
+    </div>
+
+    <% if (!posts || posts.length === 0) { %>
+      <div style="margin-top:14px; color:var(--muted);">ยังไม่มีรายการ</div>
+    <% } else { %>
+      <div class="grid">
+        <% posts.forEach(p => { %>
+          <a class="card" href="/article/<%= p.slug %>">
+            <h3><%= p.title %></h3>
+            <p><%= p.excerpt || "—" %></p>
+            <div class="meta"><%= p.created_at ? new Date(p.created_at).toLocaleString("th-TH") : "-" %></div>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

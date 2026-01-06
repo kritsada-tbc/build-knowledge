@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= pageTitle %></title>
+  <style>
+    body{font-family:system-ui,Segoe UI; margin:18px; background:#0b1220; color:#e7eefc;}
+    .box{max-width:620px;margin:0 auto;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;background:rgba(255,255,255,.03);}
+    input{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.2);color:#e7eefc;}
+    label{display:block;margin-top:10px;margin-bottom:6px;color:rgba(231,238,252,.75)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+    .btn{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#e7eefc;cursor:pointer}
+    .btn.primary{background:rgba(74,163,255,.18);border-color:rgba(74,163,255,.35)}
+    .ok{margin-top:10px;color:#7CFFB2}
+    .err{margin-top:10px;color:#ff8a8a}
+    a{color:#a9c8ff}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2><%= pageTitle %></h2>
+    <div style="margin-bottom:10px">
+      <a href="/admin/posts?type=article">← กลับหลังบ้าน</a>
+    </div>
+
+    <% if (ok) { %><div class="ok"><%= ok %></div><% } %>
+    <% if (error) { %><div class="err"><%= error %></div><% } %>
+
+    <form method="post" action="/admin/account/save">
+      <label>Username ใหม่</label>
+      <input name="username" value="<%= me?.username || '' %>" required />
+
+      <label>รหัสผ่านใหม่ (ถ้าไม่เปลี่ยน ปล่อยว่าง)</label>
+      <input name="new_password" type="password" placeholder="อย่างน้อย 6 ตัวอักษร" />
+
+      <label>ยืนยันรหัสผ่านใหม่</label>
+      <input name="new_password2" type="password" />
+
+      <div class="row">
+        <button class="btn primary" type="submit">บันทึก</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
