@@ -123,7 +123,6 @@ function requireAdmin(req, res, next) {
 }
 
 
-
 app.get("/admin/change-password", requireAdmin, (req, res) => {
   res.render("admin_change_password", {
     error: null,
@@ -177,8 +176,6 @@ app.post("/admin/change-password", requireAdmin, async (req, res) => {
     res.redirect("/admin/login");
   });
 });
-
-
 
 
 // ✅ จับ error ของ async routes ไม่ให้ทำ Node ล่ม

@@ -18,6 +18,7 @@
 <!doctype html>
 <html lang="th">
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/public/theme.css">
@@ -148,11 +149,17 @@
     html,body{ height:100%; }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", "Helvetica Neue", Arial;
-      color: var(--text);
+      font-family: "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
+      color: var(--text);     /* สีเดิมของเว็บ */
       background: var(--bg);
-      line-height: 1.5;
+      line-height: 1.8;       /* ทำให้อ่านเหมือนในภาพ */
     }
+    p{
+      font-size: 17px;
+      margin-bottom: 1.4em;
+      }
+
+
 
     a{ color:inherit; text-decoration:none; }
     .container{
@@ -622,6 +629,44 @@
 
   <main class="container">
 
+    <!-- Latest -->
+    <section id="latest">
+      <div class="section-head">
+        <div>
+          <h2>ข้อมูลที่เพิ่มล่าสุด</h2>
+          <p>หน้าแรกโชว์ “ล่าสุด” อย่างละ 3 รายการ ตาม 4 หมวดหลัก</p>
+        </div>
+      </div>
+
+      <div class="grid" id="latestGrid">
+        <% function cardList(title, list, moreHref, tag){ %>
+          <div class="card" style="grid-column: span 6;">
+            <h3><%= title %></h3>
+            <p>คลิกอ่านรายละเอียดจากหลังบ้าน</p>
+            <div class="meta"><span class="pill"><%= tag %></span><span class="pill"><a href="<%= moreHref %>">ดูทั้งหมด</a></span></div>
+            <div style="margin-top:10px; display:grid; gap:8px;">
+              <% if (!list || list.length === 0) { %>
+                <div class="small" style="color:var(--muted);">ยังไม่มีข้อมูลในหมวดนี้</div>
+              <% } %>
+              <% (list || []).forEach(p => { %>
+                <a class="quickitem" href="/article/<%= p.slug %>">
+                  <div class="card article">
+                    <h3><%= p.title %></h3>
+                  </div>
+                  <span class="badge">เปิดอ่าน</span>
+                </a>
+              <% }) %>
+            </div>
+          </div>
+        <% } %>
+
+        <% cardList("บทความงานก่อสร้าง", ARTICLES, "/articles", "Articles"); %>
+        <% cardList("ข้อมูลวัสดุก่อสร้าง", MATERIALS, "/materials", "Materials"); %>
+        <% cardList("ข้อมูลเครื่องมือช่าง", TOOLS, "/tools", "Tools"); %>
+        <% cardList("ตัวแทนจำหน่าย/แหล่งซื้อ", DEALERS, "/dealers", "Dealers"); %>
+      </div>
+    </section>
+
     <!-- Categories -->
     <section id="categories" class="section-soft">
       <div class="section-head">
@@ -674,6 +719,84 @@
           <p>คง UI เดิมไว้ — ใช้ดึงคนกลับมาใช้งานซ้ำ</p>
         </div>
       </div>
+
+      <div class="tool-card">
+        <div class="tool-header">
+          <h3>🧪 คำนวณอัตราส่วนน้ำต่อปูน (Water–Cement Ratio)</h3>
+          <p>ใช้ประเมินความเหมาะสมของปริมาณน้ำต่อปูนซีเมนต์ในงานก่อสร้าง</p>
+      </div>
+
+      <div class="tool-form">
+         <label>น้ำหนักปูนซีเมนต์ (กิโลกรัม)</label>
+         <input type="number" id="cementKg" placeholder="เช่น 50">
+
+         <label>ปริมาณน้ำที่ใช้ (ลิตร)</label>
+         <input type="number" id="waterLiter" placeholder="เช่น 25">
+
+         <button class="btn primary" onclick="calcWC()">
+          คำนวณ W/C
+      </button>
+      </div>
+
+      <div id="wcResult" class="tool-result"></div>
+     </div>
+
+     <script>
+function calcWC(){
+  const cement = parseFloat(document.getElementById("cementKg").value);
+  const water = parseFloat(document.getElementById("waterLiter").value);
+
+  if(!cement || !water || cement <= 0 || water <= 0){
+    alert("กรุณากรอกข้อมูลให้ถูกต้อง");
+    return;
+  }
+
+  const wc = water / cement;
+  let quality = "";
+  let advice = "";
+
+  if(wc < 0.40){
+    quality = "ค่อนข้างแห้ง (กำลังอัดสูง แต่เทยาก)";
+    advice = "เหมาะกับงานโครงสร้างที่ควบคุมคุณภาพดี ใช้เครื่องสั่นช่วย";
+  }else if(wc <= 0.55){
+    quality = "เหมาะสม";
+    advice = "เหมาะกับงานคอนกรีตทั่วไป ให้กำลังอัดและการทำงานที่ดี";
+  }else{
+    quality = "เหลวเกินไป (เสี่ยงกำลังอัดลด)";
+    advice = "เหมาะกับงานฉาบหรือก่อ ไม่แนะนำงานโครงสร้าง";
+  }
+
+  document.getElementById("wcResult").innerHTML = `
+    <p><b>ค่า Water–Cement Ratio (W/C)</b></p>
+    <p>น้ำ ${water} ÷ ปูน ${cement} = <b>${wc.toFixed(2)}</b></p>
+
+    <hr style="margin:12px 0">
+
+    <p><b>การแปลผล</b></p>
+    <p>สถานะ: <b>${quality}</b></p>
+
+    <hr style="margin:12px 0">
+
+    <p><b>อธิบายวิธีคำนวณ</b></p>
+    <p style="font-size:14px;color:#475569;">
+      สูตรที่ใช้คือ<br>
+      <b>W/C = ปริมาณน้ำ (กก. หรือ ลิตร) ÷ น้ำหนักปูน (กก.)</b><br><br>
+      ในน้ำ 1 ลิตร ≈ 1 กิโลกรัม<br>
+      ดังนั้น ${water} ÷ ${cement} = ${wc.toFixed(2)}
+    </p>
+
+    <hr style="margin:12px 0">
+
+    <p><b>คำแนะนำการใช้งานจริง</b></p>
+    <p style="font-size:14px;color:#475569;">
+      ${advice}<br>
+      ควรชั่งน้ำและปูนให้แม่นยำ และหลีกเลี่ยงการเติมน้ำเพิ่มหน้างานโดยไม่คำนวณ
+    </p>
+  `;
+}
+</script>
+
+
 
       <div class="tool-card">
         <div class="tool-header">
@@ -910,43 +1033,7 @@ function calcTile(){
       </div>
     </section>
 
-    <!-- Latest -->
-    <section id="latest">
-      <div class="section-head">
-        <div>
-          <h2>ข้อมูลที่เพิ่มล่าสุด</h2>
-          <p>หน้าแรกโชว์ “ล่าสุด” อย่างละ 3 รายการ ตาม 4 หมวดหลัก</p>
-        </div>
-      </div>
-
-      <div class="grid" id="latestGrid">
-        <% function cardList(title, list, moreHref, tag){ %>
-          <div class="card" style="grid-column: span 6;">
-            <h3><%= title %></h3>
-            <p>คลิกอ่านรายละเอียดจากหลังบ้าน</p>
-            <div class="meta"><span class="pill"><%= tag %></span><span class="pill"><a href="<%= moreHref %>">ดูทั้งหมด</a></span></div>
-            <div style="margin-top:10px; display:grid; gap:8px;">
-              <% if (!list || list.length === 0) { %>
-                <div class="small" style="color:var(--muted);">ยังไม่มีข้อมูลในหมวดนี้</div>
-              <% } %>
-              <% (list || []).forEach(p => { %>
-                <a class="quickitem" href="/article/<%= p.slug %>">
-                  <div class="card article">
-                    <h3><%= p.title %></h3>
-                  </div>
-                  <span class="badge">เปิดอ่าน</span>
-                </a>
-              <% }) %>
-            </div>
-          </div>
-        <% } %>
-
-        <% cardList("บทความงานก่อสร้าง", ARTICLES, "/articles", "Articles"); %>
-        <% cardList("ข้อมูลวัสดุก่อสร้าง", MATERIALS, "/materials", "Materials"); %>
-        <% cardList("ข้อมูลเครื่องมือช่าง", TOOLS, "/tools", "Tools"); %>
-        <% cardList("ตัวแทนจำหน่าย/แหล่งซื้อ", DEALERS, "/dealers", "Dealers"); %>
-      </div>
-    </section>
+    
 
     <!-- Contact -->
     <section id="contact">

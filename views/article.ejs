@@ -1,5 +1,19 @@
 <%- include("layout", { pageTitle, body: `
   <article>
+    <style>
+      /* =========================
+         Article Image Responsive
+      ========================= */
+        .article-content img,
+      main img{
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 24px auto;
+        border-radius: 14px;
+      }
+
+    </style> 
     <h1>${post.title}</h1>
     <link rel="stylesheet" href="/public/theme.css">
     <div class="muted small">
@@ -10,5 +24,6 @@
     <div class="content">
       ${post.content_html}
     </div>
+    
   </article>
 ` }) %>
