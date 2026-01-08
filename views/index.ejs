@@ -582,15 +582,14 @@
         </div>
 
         <nav class="navlinks" aria-label="เมนูหลัก">
-          <a href="#categories">หมวดข้อมูล</a>
-          <a href="#tools">เครื่องมือคำนวณ</a>
-          <a href="#latest">ล่าสุด</a>
-          <a href="/contact">ติดต่อ</a>
+          <a href="#categories">ข้อมูลหลัก</a>
+          <a href="#latest">ข้อมูลที่เพิ่มล่าสุด</a>
+          <a href="/dealers">ตัวแทนจำหน่าย</a>
         </nav>
 
         <div class="actions">
           <a class="btn" href="/contact">ติดต่อ</a>
-          <a class="btn primary" href="#latest">เริ่มอ่าน</a>
+          <a class="btn primary" href="#tools">เครื่องมือคำนวณ</a>
         </div>
       </div>
     </div>
@@ -606,8 +605,8 @@
             <p class="subtitle"><%= heroSubtitle %></p>
 
             <div class="hero-cta">
-              <a class="btn primary" href="/articles">บทความงานก่อสร้าง</a>
-              <a class="btn" href="/materials">ข้อมูลวัสดุก่อสร้าง</a>
+              <a class="btn" href="/articles">บทความงานก่อสร้าง</a>
+              <a class="btn" href="/materials">วัสดุก่อสร้าง</a>
               <a class="btn" href="/tools">อุปกรณ์เครื่องมือช่าง</a>
               <a class="btn" href="/dealers">ตัวแทนจำหน่าย/แหล่งซื้อ</a>
             </div>
@@ -642,7 +641,7 @@
         <% function cardList(title, list, moreHref, tag){ %>
           <div class="card" style="grid-column: span 6;">
             <h3><%= title %></h3>
-            <p>คลิกอ่านรายละเอียดจากหลังบ้าน</p>
+            <p>ข้อมูลล่าสุด</p>
             <div class="meta"><span class="pill"><%= tag %></span><span class="pill"><a href="<%= moreHref %>">ดูทั้งหมด</a></span></div>
             <div style="margin-top:10px; display:grid; gap:8px;">
               <% if (!list || list.length === 0) { %>
@@ -664,44 +663,6 @@
         <% cardList("ข้อมูลวัสดุก่อสร้าง", MATERIALS, "/materials", "Materials"); %>
         <% cardList("ข้อมูลเครื่องมือช่าง", TOOLS, "/tools", "Tools"); %>
         <% cardList("ตัวแทนจำหน่าย/แหล่งซื้อ", DEALERS, "/dealers", "Dealers"); %>
-      </div>
-    </section>
-
-    <!-- Categories -->
-    <section id="categories" class="section-soft">
-      <div class="section-head">
-        <div>
-          <h2>หมวดข้อมูลหลัก</h2>
-          <p>แบ่งตามที่คุณต้องการ: บทความ • วัสดุ • เครื่องมือ • ตัวแทนจำหน่าย • ติดต่อ</p>
-        </div>
-      </div>
-
-      <div class="grid">
-        <a class="card" href="/articles" data-keywords="บทความ งานก่อสร้าง article construction">
-          <h3>บทความทั่วไปเกี่ยวกับงานก่อสร้าง</h3>
-          <p>ความรู้หน้างาน เทคนิค ขั้นตอน และเช็คลิสต์</p>
-        </a>
-
-        <a class="card" href="/materials" data-keywords="วัสดุก่อสร้าง material cement concrete steel">
-          <h3>วัสดุก่อสร้าง</h3>
-        </a>
-
-        <a class="card" href="/tools" data-keywords="เครื่องมือช่าง tool drill saw meter">
-          <h3>อุปกรณ์เครื่องมือช่าง</h3>
-          <p>เครื่องมือพื้นฐาน วิธีเลือก รุ่น/ชนิดที่เหมาะกับงาน</p>
-        </a>
-
-        <a class="card" href="/dealers" data-keywords="ตัวแทนจำหน่าย แหล่งซื้อ dealer store supplier">
-          <h3>ตัวแทนจำหน่าย / แหล่งซื้อสินค้า</h3>
-          <p>รวบรวมร้าน/แหล่งซื้อ (คุณเพิ่มรายละเอียดภายหลังได้)</p>
-        </a>
-
-        <a class="card" href="/contact" data-keywords="ติดต่อ โฆษณา ลงบทความ contact advertise">
-          <h3>ติดต่อโฆษณา / ลงบทความ</h3>
-          <p>ส่งข้อความให้แอดมินหลังบ้าน เพื่อนัดหมาย/ตกลงรายละเอียด</p>
-        </a>
-
-        
       </div>
     </section>
 
@@ -1027,7 +988,44 @@ function calcTile(){
       </div>
     </section>
 
-    
+    <!-- Categories -->
+    <section id="categories" class="section-soft">
+      <div class="section-head">
+        <div>
+          <h2>หมวดความรู้</h2>
+          <p>แยกตามหัวข้อ</p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <a class="card" href="/articles" data-keywords="บทความ งานก่อสร้าง article construction">
+          <h3>บทความงานก่อสร้าง Built-In </h3>
+          <p>ความรู้หน้างาน เทคนิค ขั้นตอน และเช็คลิสต์</p>
+        </a>
+
+        <a class="card" href="/materials" data-keywords="วัสดุก่อสร้าง material cement concrete steel">
+          <h3>วัสดุก่อสร้าง</h3>
+          <p>ข้อมูลวัสดุก่อสร้าง</p>
+        </a>
+
+        <a class="card" href="/tools" data-keywords="เครื่องมือช่าง tool drill saw meter">
+          <h3>อุปกรณ์เครื่องมือช่าง</h3>
+          <p>เครื่องมือพื้นฐาน วิธีเลือก รุ่น/ชนิดที่เหมาะกับงาน</p>
+        </a>
+
+        <a class="card" href="/dealers" data-keywords="ตัวแทนจำหน่าย แหล่งซื้อ dealer store supplier">
+          <h3>ค้นหาสินค้า /ตัวแทนจำหน่าย / แหล่งซื้อสินค้า</h3>
+          <p>รวบรวมร้าน/แหล่งซื้อ</p>
+        </a>
+
+        <a class="card" href="/contact" data-keywords="ติดต่อ โฆษณา ลงบทความ contact advertise">
+          <h3>ติดต่อโฆษณา / ลงบทความ</h3>
+          <p>ส่งข้อความให้ผู้ดูแลเว็บไซต์</p>
+        </a>
+
+        
+      </div>
+    </section>    
 
     <!-- Contact -->
     <section id="contact">
