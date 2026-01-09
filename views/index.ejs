@@ -315,13 +315,32 @@
     .side-title{ margin:0; font-size: 14px; color: var(--muted); }
     .quicklist{ display:flex; flex-direction:column; gap:8px; }
     .quickitem{
-      padding: 12px;
+      padding: 6px 10px;          /* 🔽 ลด padding */
       border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(255,255,255,.03);
-      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-      transition: background .15s ease, border-color .15s ease;
+      border-radius: 10px;        /* 🔽 ขอบเล็กลง */
+      background: var(--card);
+      display:flex;
+      align-items:center;         /* 🔁 ไม่ต้อง align-start */
+      justify-content:space-between;
+      gap:6px;                    /* 🔽 ระยะห่างด้านใน */
     }
+
+    .quickitem .card{
+      padding: 0;               /* ❌ เอา padding ใหญ่ทิ้ง */
+      border: none;             /* ❌ ไม่ต้องมีกรอบ */
+      box-shadow: none;         /* ❌ ไม่ต้องมีเงา */
+      background: transparent;  /* ❌ ไม่ต้องมีพื้นหลัง */
+    }
+
+    .quickitem h3{
+      margin: 0;
+      font-size: 14px;      /* ✅ เหมาะกับ list */
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+
+
     .quickitem:hover{ background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.14); }
     .quickitem b{ display:block; margin-bottom:2px; }
     .quickitem span{ color: var(--muted); font-size: 12px; }
@@ -646,7 +665,7 @@
             <h3><%= title %></h3>
             <p>ข้อมูลล่าสุด</p>
             <div class="meta"><span class="pill"><%= tag %></span><span class="pill"><a href="<%= moreHref %>">ดูทั้งหมด</a></span></div>
-            <div style="margin-top:10px; display:grid; gap:8px;">
+            <div style="margin-top:8px; display:grid; gap:4px;">
               <% if (!list || list.length === 0) { %>
                 <div class="small" style="color:var(--muted);">ยังไม่มีข้อมูลในหมวดนี้</div>
               <% } %>
