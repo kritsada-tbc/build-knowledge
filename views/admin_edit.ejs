@@ -18,11 +18,42 @@
     label{ display:block; margin:10px 0 6px; color:var(--muted); font-size:13px; }
     input, textarea, select{ width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--line);
       background: rgba(0,0,0,.18); color:var(--text); outline:none; }
-    textarea{ min-height: 220px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    textarea{
+      min-height: 520px;                 /* ✅ ใหญ่ขึ้นมาก */
+      background: #ffffff;               /* ✅ พื้นหลังขาว */
+      color: #111827;                     /* ตัวอักษรสีเข้ม */
+      font-family: "Sarabun", system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.8;
+    }
     .row{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
     .err{ margin:10px 0; padding:10px 12px; border:1px solid rgba(255,80,80,.35); background: rgba(255,80,80,.08); border-radius:12px; }
     .small{ color:var(--muted); font-size:12px; }
+    .editor-toolbar,
+    .CodeMirror {
+      background: #ffffff;
+      color: #111827;
+    }
+
+    .CodeMirror {
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .editor-toolbar button {
+      color: #374151 !important;
+    }
+
+    .editor-toolbar button.active,
+    .editor-toolbar button:hover {
+      background: #f1f5f9;
+    }
+
   </style>
+  <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+  <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 </head>
 <body>
   <div class="wrap">
@@ -79,7 +110,9 @@
           </button>
         </p>
 
-        <textarea name="content_md" required><%= post.content_md || '' %></textarea>
+        <textarea id="editor" name="content_md" required>
+          <%= post.content_md || '' %>
+        </textarea>
 
         <label>
           <input type="checkbox" name="is_published" value="1" <%= post.is_published ? 'checked' : '' %> />
@@ -178,6 +211,26 @@ function insertImage(url) {
   🔐 เปลี่ยนรหัสผ่าน
 </a>
 
+<script>
+const easyMDE = new EasyMDE({
+  element: document.getElementById("editor"),
+  spellChecker: false,
+  autofocus: true,
+  minHeight: "520px",
+
+  toolbar: [
+    "bold", "italic", "strikethrough",
+    "|",
+    "heading",
+    "quote",
+    "unordered-list", "ordered-list",
+    "|",
+    "link", "image",
+    "|",
+    "preview", "side-by-side", "fullscreen"
+  ]
+});
+</script>
 
 </body>
 </html>
