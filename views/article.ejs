@@ -1,24 +1,35 @@
-<%- include("layout", { pageTitle, body: `
-  <article>
+<%- include("layout", {
+  pageTitle: post.title,
+  body: `
+<main class="article-wrapper">
 
-  
-  </section>
+  <article class="article-news">
 
-    <h1>${post.title}</h1>
-    <link rel="stylesheet" href="/public/theme.css">
-    <div class="muted small">
-      อัปเดต: ${new Date(post.updated_at).toLocaleDateString("th-TH")}
-      • แท็ก: ${(post.tags || "").replaceAll(",", ", ")}
-    </div>
-    <hr style="border:0;border-top:1px solid rgba(255,255,255,.10); margin: 12px 0;" />
-    
-   <div class="card">
-    <div class="article-content">
-     <%- article.content %>
-    </div>
-   </div>
+    <!-- Header -->
+    <header class="article-header">
+      <h1>${post.title}</h1>
 
-      
+      <div class="article-meta">
+        <span>🗓 ${new Date(post.updated_at).toLocaleDateString("th-TH")}</span>
+        ${post.category ? `<span>• หมวด: ${post.category}</span>` : ``}
+        ${post.tags ? `<span>• แท็ก: ${post.tags}</span>` : ``}
+      </div>
+    </header>
+
+    <!-- Cover image (ถ้ามี) -->
+    ${post.cover_image ? `
+      <figure class="article-cover">
+        <img src="${post.cover_image}" alt="${post.title}">
+      </figure>
+    ` : ``}
+
+    <!-- Content -->
+    <section class="article-content">
+      ${post.content}
+    </section>
+
   </article>
-  
-` }) %>
+
+</main>
+`
+}) %>
