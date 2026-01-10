@@ -372,3 +372,7 @@ a{ color:inherit; text-decoration:none; }
   color: #1e293b;
   border-radius: 8px;
 }
+
+<section class="article-content">
+  <%- post.content %>
+</section>
