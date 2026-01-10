@@ -11,11 +11,14 @@
       • แท็ก: ${(post.tags || "").replaceAll(",", ", ")}
     </div>
     <hr style="border:0;border-top:1px solid rgba(255,255,255,.10); margin: 12px 0;" />
-    <div class="content">
-      ${post.content_html}
+    
+   <div class="card">
+    <div class="article-content">
+     <%- article.content %>
     </div>
-    
-    
+   </div>
+
+      
   </article>
   
 ` }) %>
