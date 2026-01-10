@@ -1,36 +1,40 @@
-<%- include("layout", {
-  pageTitle: post.title,
-  body: `
-<main class="article-wrapper">
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title><%= article.title %></title>
+  <link rel="stylesheet" href="/public/theme.css">
+</head>
 
-  <article class="article-news">
+<body class="article-page">
 
-    <!-- Header -->
+  <div class="container article-container">
+
+    <!-- หัวบทความ -->
     <header class="article-header">
-      <h1>${post.title}</h1>
+      <h1><%= article.title %></h1>
 
       <div class="article-meta">
-        <span>🗓 ${new Date(post.updated_at).toLocaleDateString("th-TH")}</span>
-        ${post.category ? `<span>• หมวด: ${post.category}</span>` : ``}
-        ${post.tags ? `<span>• แท็ก: ${post.tags}</span>` : ``}
+        <span>📅 <%= article.created_at %></span>
+        <% if(article.category){ %>
+          <span> | หมวด: <%= article.category %></span>
+        <% } %>
       </div>
     </header>
 
-    <!-- Cover image (ถ้ามี) -->
-    ${post.cover_image ? `
-      <figure class="article-cover">
-        <img src="${post.cover_image}" alt="${post.title}">
-      </figure>
-    ` : ``}
+    <!-- รูปบทความ -->
+    <% if(article.image){ %>
+      <div class="article-cover">
+        <img src="<%= article.image %>" alt="<%= article.title %>">
+      </div>
+    <% } %>
 
-    <!-- Content -->
-    <section class="article-content">
-      <%- post.content %>
-    </section>
+    <!-- เนื้อหา -->
+    <article class="article-content">
+      <%- article.content %>
+    </article>
 
+  </div>
 
-  </article>
-
-</main>
-`
-}) %>
+</body>
+</html>
