@@ -57,12 +57,44 @@
     .article-content p{
       margin: 14px 0;
     }
+
+    .article-nav{
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .nav-btn{
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 14px;
+      font-size: 14px;
+      border-radius: 10px;
+      background: var(--bg-soft);
+      color: var(--text);
+      border: 1px solid var(--border-soft);
+      text-decoration: none;
+      transition: all .2s ease;
+    }
+
+    .nav-btn:hover{
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+
   </style>
 </head>
 
 <body>
 
   <div class="article-wrap">
+    <div class="article-nav">
+      <a href="/" class="nav-btn">← หน้าแรก</a>
+      <a href="/articles" class="nav-btn">← หมวดบทความ</a>
+    </div>
+
 
     <h1 class="article-title"><%= post.title %></h1>
 
