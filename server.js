@@ -416,17 +416,33 @@ app.get("/tools", (req, res) => renderList(req, res, "tool", "หมวดข้
 app.get("/dealers", (req, res) => renderList(req, res, "dealer", "หมวดตัวแทนจำหน่าย / แหล่งซื้อสินค้า"));
 
 app.get("/article/:slug", async (req, res) => {
-  const post = await get(
-    `
-    SELECT id, title, slug, excerpt, content_html, tags, type, created_at, updated_at
-    FROM posts
-    WHERE slug=? AND is_published=1
-  `,
-    [req.params.slug]
-  );
+  try {
+    const post = await get(
+      `
+      SELECT id, title, slug, excerpt, content_html, tags, type, created_at, updated_at
+      FROM posts
+      WHERE slug=? AND is_published=1
+    `,
+      [req.params.slug]
+    );
 
-  if (!post) return res.status(404).send("ไม่พบบทความ/ข้อมูล");
-  res.render("article", { pageTitle: post.title, site: res.locals.site || {}, post });
+    if (!post) {
+      return res.status(404).send("ไม่พบบทความ");
+    }
+
+    // ป้องกัน content_html ว่าง
+    post.content_html = post.content_html || "<p>(ไม่มีเนื้อหา)</p>";
+
+    res.render("article", {
+      pageTitle: post.title,
+      site: res.locals.site || {},
+      post
+    });
+
+  } catch (err) {
+    console.error("❌ ARTICLE ERROR:", err);
+    res.status(500).send("เกิดข้อผิดพลาดในการแสดงบทความ");
+  }
 });
 
 app.get("/contact", (req, res) => {
