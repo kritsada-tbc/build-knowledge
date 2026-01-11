@@ -8,8 +8,8 @@
   const TOOLS     = (typeof tools !== "undefined" && Array.isArray(tools)) ? tools : [];
   const DEALERS   = (typeof dealers !== "undefined" && Array.isArray(dealers)) ? dealers : [];
 
-  const heroTitle = SITE.hero_title || "เว็บให้ความรู้วัสดุก่อสร้าง\nอ่านง่าย ใช้จริง หน้างานเข้าใจ";
-  const heroSubtitle = SITE.hero_subtitle || "รวมคำอธิบายวัสดุ ข้อดี-ข้อจำกัด วิธีเลือก และเช็คลิสต์การใช้งาน ";
+  const heroTitle = SITE.hero_title || "แหล่งบทความ/ความรู้งานก่อสร้าง\nเพื่อส่งเสริมอุตสาหกรรมก่อสร้าง";
+  const heroSubtitle = SITE.hero_subtitle || "รวมคำอธิบายข้อมูลวัสดุ สำหรับการใช้งาน ";
 
   const heroImage = SITE.hero_image_url || ""; // ถ้ามีใน /admin/ui
   const logoText = SITE.logo_text || "B";      // ถ้ามีใน /admin/ui
@@ -655,7 +655,7 @@
       <div class="section-head">
         <div>
           <h2>ข้อมูลที่เพิ่มล่าสุด</h2>
-          <p>หน้าแรกโชว์ “ล่าสุด” อย่างละ 3 รายการ ตาม 4 หมวดหลัก</p>
+          <p>ข้อมูลล่าสุด 3 รายการ</p>
         </div>
       </div>
 
@@ -1013,14 +1013,14 @@ function calcTile(){
     <section id="categories" class="section-soft">
       <div class="section-head">
         <div>
-          <h2>หมวดความรู้</h2>
+          <h2>สารบัญ</h2>
           <p>แยกตามหัวข้อ</p>
         </div>
       </div>
 
       <div class="grid">
         <a class="card" href="/articles" data-keywords="บทความ งานก่อสร้าง article construction">
-          <h3>บทความงานก่อสร้าง Built-In </h3>
+          <h3>บทความงานก่อสร้าง / Built-In </h3>
           <p>ความรู้หน้างาน เทคนิค ขั้นตอน และเช็คลิสต์</p>
         </a>
 
