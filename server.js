@@ -835,3 +835,9 @@ initDb()
     console.error("❌ initDb failed:", e);
     process.exit(1);
   });
+
+const path = require("path");
+
+app.get("/ads.txt", (req, res) => {
+  res.sendFile(path.join(__dirname, "ads.txt"));
+});
