@@ -613,4 +613,17 @@ a{ color:inherit; text-decoration:none; }
   gap: 12px;
 }
 
+/* สารบัญแบบครึ่งจอ */
+#categories .grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* มือถือให้เรียง 1 แถว */
+@media (max-width: 768px) {
+  #categories .grid {
+    grid-template-columns: 1fr;
+  }
+}
 
