@@ -665,42 +665,34 @@
 
   <main class="container">
 
-    <!-- Latest -->
+
+    <!-- บทความล่าสุด -->
     <section id="latest">
-      <div class="section-head">
-        <div>
-          <h2>ข้อมูลที่เพิ่มล่าสุด</h2>
-          <p>ล่าสุด 3 รายการ</p>
-        </div>
-      </div>
+  <div class="section-head">
+    <h2>บทความล่าสุด</h2>
+    <p>อัปเดตความรู้ใหม่ล่าสุด</p>
+  </div>
 
-      <div class="grid" id="latestGrid">
-        <% function cardList(title, list, moreHref, tag){ %>
-          <div class="card" style="grid-column: span 6;">
-            <h3><%= title %></h3>
-            <p>ข้อมูลล่าสุด</p>
-            <div style="margin-top:8px; display:grid; gap:4px;">
-              <% if (!list || list.length === 0) { %>
-                <div class="small" style="color:var(--muted);">ยังไม่มีข้อมูลในหมวดนี้</div>
-              <% } %>
-              <% (list || []).forEach(p => { %>
-                <a class="quickitem" href="/article/<%= p.slug %>">
-                  <div class="card article">
-                    <h3><%= p.title %></h3>
-                  </div>
-                  <span class="badge">เปิดอ่าน</span>
-                </a>
-              <% }) %>
-            </div>
-          </div>
-        <% } %>
+  <ul class="article-list">
+    <% if (!ARTICLES || ARTICLES.length === 0) { %>
+      <li class="article-empty">ยังไม่มีบทความ</li>
+    <% } %>
 
-        <% cardList("บทความงานก่อสร้าง", ARTICLES, "/articles", "Articles"); %>
-        <% cardList("ข้อมูลวัสดุก่อสร้าง", MATERIALS, "/materials", "Materials"); %>
-        <% cardList("ข้อมูลเครื่องมือช่าง", TOOLS, "/tools", "Tools"); %>
-        <% cardList("ตัวแทนจำหน่าย/แหล่งซื้อ", DEALERS, "/dealers", "Dealers"); %>
-      </div>
-    </section>
+    <% (ARTICLES || []).forEach((post, index) => { %>
+      <li class="article-item">
+        <a href="/article/<%= post.slug %>">
+          <span class="article-title">
+            <%= index + 1 %>. <%= post.title %>
+          </span>
+          <span class="article-date">
+            <%= new Date(post.created_at).toLocaleDateString('th-TH') %>
+          </span>
+        </a>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+
 
     <!-- Tools -->
     <section id="tools" class="section-soft">

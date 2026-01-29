@@ -376,3 +376,45 @@ a{ color:inherit; text-decoration:none; }
 <section class="article-content">
   <%- post.content %>
 </section>
+
+/* ===== Latest Articles List ===== */
+
+.article-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.article-item {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.article-item a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  text-decoration: none;
+  color: #111827;
+  transition: background 0.2s ease;
+}
+
+.article-item a:hover {
+  background-color: #f9fafb;
+}
+
+.article-title {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.article-date {
+  font-size: 0.85rem;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.article-empty {
+  color: #9ca3af;
+  padding: 0.75rem 0;
+}
