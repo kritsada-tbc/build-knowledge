@@ -511,3 +511,49 @@ a{ color:inherit; text-decoration:none; }
   background: var(--bg-soft);
   transform: none;
 }
+
+
+/* ===============================
+   TOC : สารบัญ (FIXED)
+   =============================== */
+
+#categories .toc-list{
+  display: grid !important;
+  grid-template-columns: 1fr !important; /* ⭐ บังคับ 1 คอลัมน์ */
+  gap: 14px;
+}
+
+/* ยกเลิก span ที่ทำให้แตกเป็นหลายช่อง */
+#categories .toc-list .card{
+  grid-column: 1 / -1 !important;
+
+  padding: 14px 18px;
+  border-radius: 14px;
+
+  min-height: unset !important;
+  height: auto !important;
+
+  box-shadow: none;
+  border: 1.5px solid var(--accent);
+  background: #ffffff;
+}
+
+/* ตัวหนังสือ */
+#categories .toc-list .card h3{
+  margin: 0 0 4px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+#categories .toc-list .card p{
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* hover สุภาพ */
+#categories .toc-list .card:hover{
+  background: var(--bg-soft);
+  transform: none;
+}
