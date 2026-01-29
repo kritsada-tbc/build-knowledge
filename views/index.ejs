@@ -620,7 +620,7 @@
         </div>
 
         <nav class="navlinks" aria-label="เมนูหลัก">
-          <a href="#categories">ข้อมูลหลัก</a>
+          <a href="#categories">ข้อมูลเนื้อหา</a>
           <a href="/dealers">ตัวแทนจำหน่าย</a>
         </nav>
 
@@ -692,6 +692,47 @@
     <% }) %>
   </ul>
 </section>
+
+
+      <!-- Categories -->
+    <section id="categories" class="section-soft">
+      <div class="section-head">
+        <div>
+          <h2>สารบัญ</h2>
+          <p>แยกตามหัวข้อ</p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <a class="card" href="/articles" data-keywords="บทความ งานก่อสร้าง article construction">
+          <h3>บทความงานก่อสร้าง / Built-In </h3>
+          <p>ความรู้หน้างาน เทคนิค ขั้นตอน และเช็คลิสต์</p>
+        </a>
+
+        <a class="card" href="/materials" data-keywords="วัสดุก่อสร้าง material cement concrete steel">
+          <h3>วัสดุก่อสร้าง</h3>
+          <p>ข้อมูลวัสดุก่อสร้าง</p>
+        </a>
+
+        <a class="card" href="/tools" data-keywords="เครื่องมือช่าง tool drill saw meter">
+          <h3>อุปกรณ์เครื่องมือช่าง</h3>
+          <p>เครื่องมือพื้นฐาน วิธีเลือก รุ่น/ชนิดที่เหมาะกับงาน</p>
+        </a>
+
+        <a class="card" href="/dealers" data-keywords="ตัวแทนจำหน่าย แหล่งซื้อ dealer store supplier">
+          <h3>ค้นหาสินค้า /ตัวแทนจำหน่าย / แหล่งซื้อสินค้า</h3>
+          <p>รวบรวมร้าน/แหล่งซื้อ</p>
+        </a>
+
+        <a class="card" href="/contact" data-keywords="ติดต่อ โฆษณา ลงบทความ contact advertise">
+          <h3>ติดต่อโฆษณา / ลงบทความ</h3>
+          <p>ส่งข้อความให้ผู้ดูแลเว็บไซต์</p>
+        </a>
+
+        
+      </div>
+    </section>    
+
 
 
     <!-- Tools -->
@@ -1016,44 +1057,7 @@ function calcTile(){
       </div>
     </section>
 
-    <!-- Categories -->
-    <section id="categories" class="section-soft">
-      <div class="section-head">
-        <div>
-          <h2>สารบัญ</h2>
-          <p>แยกตามหัวข้อ</p>
-        </div>
-      </div>
-
-      <div class="grid">
-        <a class="card" href="/articles" data-keywords="บทความ งานก่อสร้าง article construction">
-          <h3>บทความงานก่อสร้าง / Built-In </h3>
-          <p>ความรู้หน้างาน เทคนิค ขั้นตอน และเช็คลิสต์</p>
-        </a>
-
-        <a class="card" href="/materials" data-keywords="วัสดุก่อสร้าง material cement concrete steel">
-          <h3>วัสดุก่อสร้าง</h3>
-          <p>ข้อมูลวัสดุก่อสร้าง</p>
-        </a>
-
-        <a class="card" href="/tools" data-keywords="เครื่องมือช่าง tool drill saw meter">
-          <h3>อุปกรณ์เครื่องมือช่าง</h3>
-          <p>เครื่องมือพื้นฐาน วิธีเลือก รุ่น/ชนิดที่เหมาะกับงาน</p>
-        </a>
-
-        <a class="card" href="/dealers" data-keywords="ตัวแทนจำหน่าย แหล่งซื้อ dealer store supplier">
-          <h3>ค้นหาสินค้า /ตัวแทนจำหน่าย / แหล่งซื้อสินค้า</h3>
-          <p>รวบรวมร้าน/แหล่งซื้อ</p>
-        </a>
-
-        <a class="card" href="/contact" data-keywords="ติดต่อ โฆษณา ลงบทความ contact advertise">
-          <h3>ติดต่อโฆษณา / ลงบทความ</h3>
-          <p>ส่งข้อความให้ผู้ดูแลเว็บไซต์</p>
-        </a>
-
-        
-      </div>
-    </section>    
+      
 
     <!-- Contact -->
     <section id="contact">
@@ -1100,7 +1104,7 @@ function calcTile(){
             <b><%= SITE.site_name || "Thai Build Center" %></b>
           </div>
           <div class="small">
-            © <span id="year"></span> • KRITSADA TEAKWOOD FACTORY
+            © <span id="year"></span> • THAI BUILD CENTER งานก่อสร้างเพื่อการพัฒนาเมือง
           </div>
         </div>
 
