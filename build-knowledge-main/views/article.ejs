@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7963442966946281"
+     crossorigin="anonymous"></script>
+
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VV84RQW49P"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VV84RQW49P');
+</script>
+
+  <meta charset="UTF-8" />
+  <title><%= pageTitle %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="stylesheet" href="/public/theme.css">
+
+  <style>
+    body{
+      background: var(--bg);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    .article-wrap{
+      max-width: 860px;
+      margin: 40px auto;
+      background: var(--card);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+
+    .article-nav{
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .nav-btn{
+      padding: 8px 14px;
+      font-size: 14px;
+      border-radius: 10px;
+      background: var(--bg-soft);
+      color: var(--text);
+      border: 1px solid var(--border-soft);
+      text-decoration: none;
+    }
+
+    .nav-btn:hover{
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .article-title{
+      font-size: 2.1rem;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      color: var(--heading);
+    }
+
+    .article-meta{
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .article-content{
+      font-size: 17px;
+      line-height: 1.85;
+      color: var(--text);
+    }
+
+    .article-content img{
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 26px auto;
+      border-radius: 14px;
+    }
+
+    .article-content h2,
+    .article-content h3{
+      margin-top: 32px;
+      color: var(--heading);
+    }
+
+    .article-content p{
+      margin: 16px 0;
+    }
+
+    .article-content ul,
+    .article-content ol{
+      margin: 16px 0 16px 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="article-wrap">
+
+    <div class="article-nav">
+      <a href="/" class="nav-btn">← หน้าแรก</a>
+      <a href="/articles" class="nav-btn">← หมวดบทความ</a>
+    </div>
+
+    <h1 class="article-title"><%= post.title %></h1>
+
+    <div class="article-meta">
+      เผยแพร่เมื่อ
+      <%= new Date(post.created_at).toLocaleDateString("th-TH") %>
+    </div>
+
+    <div class="article-content">
+      <%- post.content_html %>
+    </div>
+
+  </div>
+
+</body>
+</html>

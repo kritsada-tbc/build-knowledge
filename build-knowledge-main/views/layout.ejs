@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7963442966946281"
+     crossorigin="anonymous"></script>
+     
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/public/theme.css">
+  <title><%= pageTitle %></title>
+  <link rel="stylesheet" href="/public/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav">
+      <a class="brand" href="/">ศูนย์ความรู้วัสดุก่อสร้าง</a>
+      <div class="row">
+        <a class="btn" href="/">หน้าแรก</a>
+        <a class="btn" href="/admin/posts">แอดมิน</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <%- body %>
+  </main>
+
+  <footer class="container small muted" style="border-top:1px solid rgba(255,255,255,.10); padding-top:14px;">
+    © <%= new Date().getFullYear() %> • Knowledge site
+  </footer>
+</body>
+</html>

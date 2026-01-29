@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title><%= pageTitle %></title>
+  <style>
+    body{ font-family: system-ui, "Segoe UI", "Noto Sans Thai", Arial; margin:20px; }
+    table{ width:100%; border-collapse:collapse; margin-top:12px; }
+    th,td{ border:1px solid #ddd; padding:8px; text-align:left; }
+    .btn{ padding:8px 12px; border:1px solid #111; background:#111; color:#fff; cursor:pointer; border-radius:10px; text-decoration:none; }
+    .btn2{ padding:8px 12px; border:1px solid #111; background:#fff; color:#111; cursor:pointer; border-radius:10px; text-decoration:none; }
+    .small{ color:#666; font-size:13px; }
+    form{ display:inline; }
+  </style>
+</head>
+<body>
+  <h2>การ์ด: <%= section %></h2>
+  <div class="small">
+    <a href="/admin/ui">← กลับตั้งค่า UI</a> |
+    <a href="/">ดูหน้าเว็บ</a>
+  </div>
+
+  <p><b>หัวข้อ section:</b> <%= sectionRow?.title %> | <span class="small"><%= sectionRow?.description %></span></p>
+
+  <a class="btn" href="/admin/cards/<%= section %>/new">+ เพิ่มการ์ด</a>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ลำดับ</th>
+        <th>Title</th>
+        <th>Subtitle</th>
+        <th>เปิดใช้</th>
+        <th>จัดการ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% cards.forEach(c => { %>
+        <tr>
+          <td><%= c.sort_order %></td>
+          <td><%= c.title %></td>
+          <td><%= c.subtitle %></td>
+          <td><%= c.is_enabled ? "ON" : "OFF" %></td>
+          <td>
+            <a class="btn2" href="/admin/cards/<%= section %>/<%= c.id %>/edit">แก้ไข</a>
+            <form method="post" action="/admin/cards/<%= section %>/<%= c.id %>/delete" onsubmit="return confirm('ลบการ์ดนี้?')">
+              <button class="btn2" type="submit">ลบ</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>
