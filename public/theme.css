@@ -605,3 +605,12 @@ a{ color:inherit; text-decoration:none; }
 #categories .toc-list a.card:hover{
   background: var(--bg-soft);
 }
+
+
+.toc-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+
