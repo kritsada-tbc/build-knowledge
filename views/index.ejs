@@ -1,5 +1,5 @@
 <%
-  // กันพัง: ถ้า server.js ส่งมาไม่ครบ จะมีค่าเริ่มต้นให้
+  //กันพัง: ถ้า server.js ส่งมาไม่ครบ จะมีค่าเริ่มต้นให้
   const SITE = (typeof site !== "undefined" && site) ? site : {};
   const page = (typeof pageTitle !== "undefined" && pageTitle) ? pageTitle : (SITE.site_name || "Thai Build Center");
 
@@ -13,6 +13,7 @@
 
   const heroImage = SITE.hero_image_url || ""; // ถ้ามีใน /admin/ui
   const logoText = SITE.logo_text || "B";      // ถ้ามีใน /admin/ui
+
 %>
 
 <!doctype html>
@@ -614,13 +615,12 @@
 
         <div class="search" role="search">
           <span aria-hidden="true">🔎</span>
-          <input id="searchInput" type="search" placeholder="ค้นหา เช่น ปูน, เหล็ก, กันซึม, ฉนวน…" />
+          <input id="searchInput" type="search" placeholder="ค้นหา เช่น ปูน, เหล็ก, " />
           <span class="hint">กด Enter</span>
         </div>
 
         <nav class="navlinks" aria-label="เมนูหลัก">
           <a href="#categories">ข้อมูลหลัก</a>
-          <a href="#latest">ข้อมูลที่เพิ่มล่าสุด</a>
           <a href="/dealers">ตัวแทนจำหน่าย</a>
         </nav>
 
