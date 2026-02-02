@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= pageTitle %> | <%= site.site_name %></title>
+
+  <meta name="description" content="<%= site.meta_description %>">
+
+  <link rel="stylesheet" href="/public/theme.css">
+
+  <link rel="canonical" href="<%= (site.site_url || '') %><%= (typeof request !== 'undefined' ? request.originalUrl : '') %>">
+
+  <meta property="og:title" content="<%= pageTitle %> | <%= site.site_name %>">
+  <meta property="og:description" content="<%= site.meta_description %>">
+  <meta property="og:type" content="website">
+
+</head>
+<body>
+
+  <!-- Topbar (ยกจาก index มาใช้ร่วมกัน) -->
+  <div class="topbar">
+    <div class="container nav">
+      <a class="brand" href="/">
+        <div class="logo"><%= site.logo_text || "B" %></div>
+        <div>
+          <%= site.site_name %>
+          <div class="small"><%= site.site_tagline %></div>
+        </div>
+      </a>
+
+      <nav class="navlinks">
+        <a href="/articles">บทความ</a>
+        <a href="/materials">วัสดุ</a>
+        <a href="/tools">เครื่องมือ</a>
+        <a href="/dealers">แหล่งซื้อ</a>
+      </nav>
+
+      <div class="actions">
+        <a class="btn" href="/contact">ติดต่อ</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    <%- body %>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      © <%= new Date().getFullYear() %> <%= site.site_name %>
+    </div>
+  </footer>
+
+</body>
+</html>
