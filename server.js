@@ -130,9 +130,11 @@ function requireAdmin(req, res, next) {
 
 app.get("/admin/change-password", requireAdmin, (req, res) => {
   res.render("admin_change_password", {
-    error: null,
-    success: null
-  });
+  layout: false,
+  error: null,
+  success: null
+});
+
 });
 
 app.post("/admin/change-password", requireAdmin, async (req, res) => {
@@ -491,7 +493,12 @@ app.post("/contact/send", async (req, res) => {
 // ===== Admin Auth (ใช้ admin_users + bcrypt) =====
 app.get("/admin/login", (req, res) => {
   if (req.session && req.session.isAdmin) return res.redirect("/admin/posts?type=article");
-  res.render("admin_login", { pageTitle: "Admin Login", error: null });
+  res.render("admin_login", {
+  layout: false,
+  pageTitle: "Admin Login",
+  error: null
+});
+
 });
 
 app.post("/admin/login", async (req, res) => {
@@ -538,21 +545,35 @@ app.get("/admin/posts", requireAdmin, async (req, res) => {
   );
 
   res.render("admin_list", {
-    pageTitle: `จัดการ: ${typeLabel(type)}`,
-    posts,
-    type,
-  });
+  layout: false,
+  pageTitle: `จัดการ: ${typeLabel(type)}`,
+  posts,
+  type,
+});
+
 });
 
 app.get("/admin/posts/new", requireAdmin, (req, res) => {
   const type = safeType(req.query.type || "article");
   res.render("admin_edit", {
-    pageTitle: `เพิ่ม: ${typeLabel(type)}`,
-    mode: "new",
-    type,
-    post: { id: null, title: "", slug: "", excerpt: "", content_md: "", tags: "", is_published: 0, type },
-    error: null,
-  });
+  layout: false,
+  pageTitle: `เพิ่ม: ${typeLabel(type)}`,
+  mode: "new",
+  type,
+  post: {
+  id: null,
+  title: "",
+  slug: "",
+  excerpt: "",
+  content_md: "",
+  tags: "",
+  is_published: 0,
+  type
+},
+
+  error: null,
+});
+
 });
 
 app.get("/admin/posts/:id/edit", requireAdmin, async (req, res) => {
@@ -567,12 +588,14 @@ app.get("/admin/posts/:id/edit", requireAdmin, async (req, res) => {
 
   if (!post) return res.status(404).send("ไม่พบรายการ");
   res.render("admin_edit", {
-    pageTitle: `แก้ไข: ${typeLabel(post.type)}`,
-    mode: "edit",
-    type: post.type || "article",
-    post,
-    error: null,
-  });
+  layout: false,
+  pageTitle: `แก้ไข: ${typeLabel(post.type)}`,
+  mode: "edit",
+  type: post.type || "article",
+  post,
+  error: null,
+});
+
 });
 
 app.post("/admin/posts/save", requireAdmin, async (req, res) => {
@@ -643,16 +666,20 @@ app.post("/admin/posts/:id/delete", requireAdmin, async (req, res) => {
 
 // ===== Admin: Messages =====
 app.get("/admin/messages", requireAdmin, async (req, res) => {
-  const msgs = await all(
-    `
+  const msgs = await all(`
     SELECT id, name, contact, subject, message, created_at, is_read
     FROM contact_messages
     ORDER BY datetime(created_at) DESC
     LIMIT 200
-  `
-  );
-  res.render("admin_messages", { pageTitle: "ข้อความติดต่อ", msgs });
+  `);
+
+  res.render("admin_messages", {
+    layout: false,
+    pageTitle: "ข้อความติดต่อ",
+    msgs
+  });
 });
+
 
 app.post("/admin/messages/:id/read", requireAdmin, async (req, res) => {
   const id = Number(req.params.id);
@@ -671,7 +698,13 @@ app.get("/admin/ui", requireAdmin, asyncHandler(async (req, res) => {
   const rows = await all(`SELECT key, value FROM site_settings`);
   const site = {};
   rows.forEach(r => site[r.key] = r.value);
-  res.render("admin_ui", { pageTitle: "ตั้งค่า UI เว็บไซต์", site, error: null });
+  res.render("admin_ui", {
+  layout: false,
+  pageTitle: "ตั้งค่า UI เว็บไซต์",
+  site,
+  error: null
+});
+
 }));
 
 app.post("/admin/ui/save", requireAdmin, asyncHandler(async (req, res) => {
@@ -702,9 +735,11 @@ app.get("/admin/media", requireAdmin, async (req, res) => {
   `);
 
   res.render("admin_media", {
-    pageTitle: "Media Library",
-    files
-  });
+  layout: false,
+  pageTitle: "Media Library",
+  files
+});
+
 });
 
 // ===== Admin: Media JSON (for insert image modal) =====
@@ -781,7 +816,14 @@ app.post("/admin/media/:id/delete", requireAdmin, async (req, res) => {
 // ===== Admin: Account (เปลี่ยน ID/Password) =====
 app.get("/admin/account", requireAdmin, async (req, res) => {
   const me = await get(`SELECT id, username FROM admin_users WHERE id=?`, [req.session.adminUserId]);
-  res.render("admin_account", { pageTitle: "ตั้งค่าบัญชีแอดมิน", me, error: null, ok: null });
+  res.render("admin_account", {
+  layout: false,
+  pageTitle: "ตั้งค่าบัญชีแอดมิน",
+  me,
+  error: null,
+  ok: null
+});
+
 });
 
 app.post("/admin/account/save", requireAdmin, async (req, res) => {
