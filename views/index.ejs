@@ -666,32 +666,62 @@
   <main class="container">
 
 
-    <!-- บทความล่าสุด -->
-    <section id="latest">
+<section id="latest">
   <div class="section-head">
     <h2>บทความล่าสุด</h2>
-    <p>คลิ๊กชื่อหัวข้อเพื่ออ่าน</p>
+    <p>แยกตามหมวดความรู้</p>
   </div>
 
-  <ul class="article-list">
-    <% if (!ARTICLES || ARTICLES.length === 0) { %>
-      <li class="article-empty">ยังไม่มีบทความ</li>
-    <% } %>
+  <div class="latest-groups">
 
-    <% (ARTICLES || []).forEach((post, index) => { %>
-      <li class="article-item">
-        <a href="/article/<%= post.slug %>">
-          <span class="article-title">
-            <%= index + 1 %>. <%= post.title %>
-          </span>
-          <span class="article-date">
-            <%= new Date(post.created_at).toLocaleDateString('th-TH') %>
-          </span>
-        </a>
-      </li>
-    <% }) %>
-  </ul>
+    <!-- งานก่อสร้าง -->
+    <div class="latest-group">
+      <h3>งานก่อสร้าง</h3>
+      <ul>
+        <% (latestArticles || []).forEach((p, i) => { %>
+          <li>
+            <a href="/article/<%= p.slug %>">
+              <%= i + 1 %>. <%= p.title %>
+            </a>
+          </li>
+        <% }) %>
+      </ul>
+      <a class="more" href="/articles">ดูทั้งหมด →</a>
+    </div>
+
+    <!-- วัสดุก่อสร้าง -->
+    <div class="latest-group">
+      <h3>วัสดุก่อสร้าง</h3>
+      <ul>
+        <% (latestMaterials || []).forEach((p, i) => { %>
+          <li>
+            <a href="/article/<%= p.slug %>">
+              <%= i + 1 %>. <%= p.title %>
+            </a>
+          </li>
+        <% }) %>
+      </ul>
+      <a class="more" href="/materials">ดูทั้งหมด →</a>
+    </div>
+
+    <!-- เครื่องมือช่าง -->
+    <div class="latest-group">
+      <h3>อุปกรณ์เครื่องมือช่าง</h3>
+      <ul>
+        <% (latestTools || []).forEach((p, i) => { %>
+          <li>
+            <a href="/article/<%= p.slug %>">
+              <%= i + 1 %>. <%= p.title %>
+            </a>
+          </li>
+        <% }) %>
+      </ul>
+      <a class="more" href="/tools">ดูทั้งหมด →</a>
+    </div>
+
+  </div>
 </section>
+
 
 
       <!-- Categories -->
@@ -726,9 +756,8 @@
 
         
       </div>
-    </section>    
-
-
+    </section>
+    
 
     <!-- Tools -->
     <section id="tools" class="section-soft">
