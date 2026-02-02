@@ -9,6 +9,7 @@ const { marked } = require("marked");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 
+const expressLayouts = require("express-ejs-layouts");
 
 dotenv.config();
 
@@ -33,6 +34,8 @@ app.use(
 app.use(express.static('public'));
 
 app.set("view engine", "ejs");
+app.use(expressLayouts);
+app.set("layout", "layout_public");
 app.set("views", path.join(__dirname, "views"));
 app.use("/public", express.static(path.join(__dirname, "public")));
 const uploadDir = path.join(__dirname, "public", "uploads");
