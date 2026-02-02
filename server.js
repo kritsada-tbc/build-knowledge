@@ -869,11 +869,25 @@ app.use((err, req, res, next) => {
 // ===== 404 =====
 app.use((req, res) => res.status(404).send("404 Not Found"));
 
-// ===== Start =====
+// ===== Start (SAFE MODE) =====
 initDb()
   .then(() => {
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log(`✅ Server running → http://localhost:${PORT}`);
+    });
+
+    server.on("error", (err) => {
+      if (err.code === "EADDRINUSE") {
+        console.error(`❌ PORT ${PORT} ถูกใช้งานอยู่แล้ว`);
+        console.error("👉 วิธีแก้:");
+        console.error("1) ปิด Node ตัวเก่าที่รันอยู่");
+        console.error("2) หรือรันด้วยคำสั่ง:");
+        console.error("   set PORT=3001 && npm run dev");
+        process.exit(1);
+      } else {
+        console.error("❌ Server error:", err);
+        process.exit(1);
+      }
     });
   })
   .catch((e) => {
@@ -881,6 +895,3 @@ initDb()
     process.exit(1);
   });
 
-app.get("/ads.txt", (req, res) => {
-  res.sendFile(path.join(__dirname, "ads.txt"));
-});
