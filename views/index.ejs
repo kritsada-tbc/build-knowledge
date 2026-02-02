@@ -678,7 +678,7 @@
     <div class="latest-group">
       <h3>งานก่อสร้าง</h3>
       <ul>
-        <% (latestArticles || []).forEach((p, i) => { %>
+        <% (ARTICLES || []).forEach((p, i) => { %>
           <li>
             <a href="/article/<%= p.slug %>">
               <%= i + 1 %>. <%= p.title %>
@@ -693,7 +693,7 @@
     <div class="latest-group">
       <h3>วัสดุก่อสร้าง</h3>
       <ul>
-        <% (latestMaterials || []).forEach((p, i) => { %>
+        <% (MATERIALS || []).forEach((p, i) => { %>
           <li>
             <a href="/article/<%= p.slug %>">
               <%= i + 1 %>. <%= p.title %>
@@ -708,7 +708,7 @@
     <div class="latest-group">
       <h3>อุปกรณ์เครื่องมือช่าง</h3>
       <ul>
-        <% (latestTools || []).forEach((p, i) => { %>
+        <% (TOOLS || []).forEach((p, i) => { %>
           <li>
             <a href="/article/<%= p.slug %>">
               <%= i + 1 %>. <%= p.title %>
