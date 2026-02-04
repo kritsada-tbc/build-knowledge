@@ -39,16 +39,24 @@ app.set("layout", "layout_public");
 /* ================= Database ================= */
 const db = new sqlite3.Database(path.join(__dirname, "data.db"));
 
-const run = (sql, p = []) =>
-  new Promise((res, rej) => db.run(sql, p, e => e ? rej(e) : res()));
+const all = (sql, p = []) =>
+  new Promise((res, rej) =>
+    db.all(sql, p, (e, r) => (e ? rej(e) : res(r)))
+  );
 
 const get = (sql, p = []) =>
-  new Promise((res, rej) => db.get(sql, p, (e, r) => e ? rej(e) : res(r)));
+  new Promise((res, rej) =>
+    db.get(sql, p, (e, r) => (e ? rej(e) : res(r)))
+  );
 
-const all = (sql, p = []) =>
-  new Promise((res, rej) => db.all(sql, p, (e, r) => e ? rej(e) : res(r)));
+const run = (sql, p = []) =>
+  new Promise((res, rej) =>
+    db.run(sql, p, function (e) {
+      e ? rej(e) : res(this);
+    })
+  );
 
-/* ================= Global locals ================= */
+/* ================= Global locals (สำคัญมาก) ================= */
 app.use(async (req, res, next) => {
   try {
     const rows = await all(`SELECT key,value FROM site_settings`);
@@ -63,16 +71,12 @@ app.use(async (req, res, next) => {
   next();
 });
 
-/* ================= Helpers ================= */
-const nowISO = () => new Date().toISOString();
-const mdToHtml = md => marked.parse(md || "");
-
 /* ================= Init DB ================= */
 async function initDb() {
   await run(`
     CREATE TABLE IF NOT EXISTS site_settings (
       key TEXT PRIMARY KEY,
-      value TEXT NOT NULL
+      value TEXT
     )
   `);
 
@@ -93,50 +97,60 @@ async function initDb() {
       content_html TEXT,
       type TEXT,
       is_published INTEGER,
-      created_at TEXT,
-      updated_at TEXT
+      created_at TEXT
     )
   `);
 }
 
-/* ================= Public ================= */
+/* ================= Public Routes ================= */
 
 // หน้าแรก
 app.get("/", async (req, res) => {
   const posts = await all(`
-    SELECT title, slug, created_at
+    SELECT title,slug,created_at
     FROM posts
     WHERE is_published=1
     ORDER BY created_at DESC
     LIMIT 5
   `);
-
   res.render("index", { posts });
 });
 
-// helper list
-async function renderList(res, type, title) {
+// list กลาง (ใช้ร่วมกันทุกหมวด)
+async function renderList(req, res, type, title) {
   const posts = await all(
-    `SELECT title, slug, created_at
-     FROM posts
-     WHERE is_published=1 AND type=?
-     ORDER BY created_at DESC`,
+    `
+    SELECT title,slug,created_at
+    FROM posts
+    WHERE is_published=1 AND type=?
+    ORDER BY created_at DESC
+    `,
     [type]
   );
 
   res.render("list", {
-    pageTitle: title,
     posts,
+    pageTitle: title,
   });
 }
 
-// list pages
-app.get("/articles", (_, res) => renderList(res, "article", "บทความ"));
-app.get("/materials", (_, res) => renderList(res, "material", "วัสดุก่อสร้าง"));
-app.get("/tools",     (_, res) => renderList(res, "tool", "เครื่องมือ"));
-app.get("/dealers",   (_, res) => renderList(res, "dealer", "แหล่งซื้อ"));
+app.get("/articles", (req, res) =>
+  renderList(req, res, "article", "บทความ")
+);
 
-// article detail
+app.get("/materials", (req, res) =>
+  renderList(req, res, "material", "วัสดุก่อสร้าง")
+);
+
+app.get("/tools", (req, res) =>
+  renderList(req, res, "tool", "เครื่องมือ")
+);
+
+app.get("/dealers", (req, res) =>
+  renderList(req, res, "dealer", "แหล่งซื้อ")
+);
+
+// บทความเดี่ยว
 app.get("/article/:slug", async (req, res) => {
   const post = await get(
     `SELECT * FROM posts WHERE slug=? AND is_published=1`,
@@ -146,25 +160,19 @@ app.get("/article/:slug", async (req, res) => {
   if (!post) return res.status(404).send("ไม่พบบทความ");
 
   res.render("article", {
-    pageTitle: post.title,
     post,
+    pageTitle: post.title,
   });
 });
 
 /* ================= Error ================= */
-app.use((err, req, res, next) => {
-  console.error("❌ SERVER ERROR:", err);
-  res.status(500).send("Server error");
+app.use((req, res) => {
+  res.status(404).send("404 Not Found");
 });
 
 /* ================= Start ================= */
-initDb()
-  .then(() => {
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`✅ Server running on port ${PORT}`);
-    });
-  })
-  .catch(err => {
-    console.error("❌ DB init failed", err);
-    process.exit(1);
+initDb().then(() => {
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`✅ Server running on port ${PORT}`);
   });
+});
