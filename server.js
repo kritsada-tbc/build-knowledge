@@ -146,6 +146,37 @@ app.get("/", async (req, res) => {
   res.render("index", { posts });
 });
 
+/* ================= Articles List ================= */
+app.get("/articles", async (req, res) => {
+  const posts = await all(`
+    SELECT id, title, slug, created_at
+    FROM posts
+    WHERE is_published=1 AND type='article'
+    ORDER BY created_at DESC
+  `);
+
+  res.render("list", {
+    posts,
+    pageTitle: "บทความทั้งหมด",
+  });
+});
+
+/* ================= Single Article ================= */
+app.get("/article/:slug", async (req, res) => {
+  const post = await get(
+    `SELECT * FROM posts WHERE slug=? AND is_published=1`,
+    [req.params.slug]
+  );
+
+  if (!post) return res.status(404).send("ไม่พบบทความ");
+
+  res.render("article", {
+    post,
+    pageTitle: post.title,
+  });
+});
+
+
 // helper แสดง list ตาม type
 async function renderList(req, res, type, pageTitle) {
   const posts = await all(
