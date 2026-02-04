@@ -179,9 +179,10 @@ app.use((err, req, res, next) => {
 /* ================= Start ================= */
 initDb()
   .then(() => {
-    app.listen(PORT, () =>
-      console.log(`✅ Server → http://localhost:${PORT}`)
-    );
+    app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ Server → http://0.0.0.0:${PORT}`);
+});
+
   })
   .catch((e) => {
     console.error("❌ DB init failed", e);
