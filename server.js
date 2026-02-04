@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 const express = require("express");
 const session = require("express-session");
 const helmet = require("helmet");
@@ -7,10 +8,10 @@ const dotenv = require("dotenv");
 const sqlite3 = require("sqlite3").verbose();
 const { marked } = require("marked");
 const bcrypt = require("bcrypt");
+const multer = require("multer");
 const expressLayouts = require("express-ejs-layouts");
 
 dotenv.config();
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -74,7 +75,6 @@ app.use(async (req, res, next) => {
 /* ================= Helpers ================= */
 const nowISO = () => new Date().toISOString();
 const mdToHtml = md => marked.parse(md || "");
-
 const requireAdmin = (req, res, next) =>
   req.session?.isAdmin ? next() : res.redirect("/admin/login");
 
@@ -87,18 +87,26 @@ async function initDb() {
     )
   `);
 
+  const s = await get(`SELECT COUNT(*) c FROM site_settings`);
+  if (s.c === 0) {
+    await run(`INSERT INTO site_settings VALUES (?,?)`, [
+      "site_name",
+      "ศูนย์ความรู้วัสดุก่อสร้าง",
+    ]);
+  }
+
   await run(`
     CREATE TABLE IF NOT EXISTS admin_users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT,
+      username TEXT UNIQUE,
       password_hash TEXT,
       created_at TEXT,
       updated_at TEXT
     )
   `);
 
-  const admin = await get(`SELECT COUNT(*) c FROM admin_users`);
-  if (admin.c === 0) {
+  const a = await get(`SELECT COUNT(*) c FROM admin_users`);
+  if (a.c === 0) {
     await run(
       `INSERT INTO admin_users VALUES (NULL,?,?,?,?)`,
       ["admin", await bcrypt.hash("admin1234", 10), nowISO(), nowISO()]
@@ -110,38 +118,26 @@ async function initDb() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT,
       slug TEXT UNIQUE,
+      content_md TEXT,
       content_html TEXT,
       type TEXT,
       is_published INTEGER,
-      created_at TEXT
+      created_at TEXT,
+      updated_at TEXT
     )
   `);
 
-
   await run(`
-  CREATE TABLE IF NOT EXISTS messages (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    contact TEXT,
-    subject TEXT,
-    message TEXT,
-    created_at TEXT
-  )
-`);
-
-  await run(`
-  CREATE TABLE IF NOT EXISTS media_files (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    original_name TEXT,
-    file_name TEXT,
-    mime_type TEXT,
-    size INTEGER,
-    url TEXT,
-    created_at TEXT
-  )
-`);
-
-
+    CREATE TABLE IF NOT EXISTS media_files (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      original_name TEXT,
+      file_name TEXT,
+      mime_type TEXT,
+      size INTEGER,
+      url TEXT,
+      created_at TEXT
+    )
+  `);
 }
 
 /* ================= Public ================= */
@@ -185,17 +181,18 @@ app.get("/admin/login", (req, res) =>
 );
 
 app.post("/admin/login", async (req, res) => {
-  const u = await get(`SELECT * FROM admin_users WHERE username=?`, [req.body.user]);
+  const u = await get(`SELECT * FROM admin_users WHERE username=?`, [
+    req.body.user,
+  ]);
   if (!u || !(await bcrypt.compare(req.body.pass, u.password_hash))) {
     return res.render("admin_login", { layout: false, error: "Login ผิด" });
   }
   req.session.isAdmin = true;
-  res.redirect("/admin/posts");
+  res.redirect("/admin/posts?type=article");
 });
 
 app.get("/admin/posts", requireAdmin, async (req, res) => {
   const type = req.query.type || "article";
-
   const posts = await all(
     `SELECT * FROM posts WHERE type=? ORDER BY updated_at DESC`,
     [type]
@@ -204,70 +201,28 @@ app.get("/admin/posts", requireAdmin, async (req, res) => {
   res.render("admin_list", {
     layout: false,
     posts,
-    type, // ⭐ สำคัญมาก
+    type,
   });
 });
 
-app.get("/admin/messages", requireAdmin, async (req, res) => {
-  const messages = await all(`
-    SELECT * FROM messages
-    ORDER BY created_at DESC
-  `);
-
-  res.render("admin_messages", {
-    layout: false,
-    messages
-  });
-});
-
-app.get("/admin/media", requireAdmin, async (req, res) => {
-  const uploadDir = path.join(__dirname, "public/uploads");
-  let files = [];
-
-  if (fs.existsSync(uploadDir)) {
-    files = fs.readdirSync(uploadDir).map(f => ({
-      name: f,
-      url: "/public/uploads/" + f
-    }));
-  }
-
-  res.render("admin_media", {
-    layout: false,
-    files
-  });
-});
-
-
-// ===== Admin: New Post =====
-app.get("/admin/posts/new", requireAdmin, async (req, res) => {
+/* ===== New / Edit ===== */
+app.get("/admin/posts/new", requireAdmin, (req, res) => {
   const type = req.query.type || "article";
-
   res.render("admin_edit", {
     layout: false,
-    pageTitle: "เพิ่มบทความ",
     mode: "new",
     type,
-    post: {
-      id: null,
-      title: "",
-      slug: "",
-      content_md: "",
-      content_html: "",
-      is_published: 0,
-      type,
-    },
+    post: { title: "", content_md: "", is_published: 0 },
     error: null,
   });
 });
 
-// ===== Admin: Edit Post =====
 app.get("/admin/posts/:id/edit", requireAdmin, async (req, res) => {
   const post = await get(`SELECT * FROM posts WHERE id=?`, [req.params.id]);
-  if (!post) return res.status(404).send("ไม่พบโพสต์");
+  if (!post) return res.sendStatus(404);
 
   res.render("admin_edit", {
     layout: false,
-    pageTitle: "แก้ไขบทความ",
     mode: "edit",
     type: post.type,
     post,
@@ -275,16 +230,8 @@ app.get("/admin/posts/:id/edit", requireAdmin, async (req, res) => {
   });
 });
 
-// ===== Admin: Save Post =====
 app.post("/admin/posts/save", requireAdmin, async (req, res) => {
-  const {
-    id,
-    title,
-    content_md,
-    type,
-    is_published
-  } = req.body;
-
+  const { id, title, content_md, type, is_published } = req.body;
   const slug = title
     .toLowerCase()
     .replace(/\s+/g, "-")
@@ -300,62 +247,30 @@ app.post("/admin/posts/save", requireAdmin, async (req, res) => {
     );
   } else {
     await run(
-      `INSERT INTO posts (title, slug, content_md, content_html, type, is_published, created_at, updated_at)
+      `INSERT INTO posts (title,slug,content_md,content_html,type,is_published,created_at,updated_at)
        VALUES (?,?,?,?,?,?,?,?)`,
       [title, slug, content_md, html, type, is_published ? 1 : 0, now, now]
     );
   }
 
-  res.redirect("/admin/posts");
+  res.redirect(`/admin/posts?type=${type}`);
 });
 
-
-
-/* ================= Error ================= */
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).send("Server error");
-});
-
-/* ================= Start ================= */
-initDb().then(() => {
-  app.listen(3000, "127.0.0.1", () => {
-    console.log("✅ Server running on 127.0.0.1:3000");
-  });
-});
-
-
-/* ================= Media Upload ================= */
+/* ================= Media ================= */
 const uploadDir = path.join(__dirname, "public/uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, Date.now() + "-" + Math.random().toString(16).slice(2) + ext);
-  },
-});
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const upload = multer({
-  storage,
-  limits: { fileSize: 8 * 1024 * 1024 },
+  storage: multer.diskStorage({
+    destination: uploadDir,
+    filename: (_, file, cb) =>
+      cb(null, Date.now() + "-" + file.originalname),
+  }),
 });
 
-/* ================= Media Library ================= */
 app.get("/admin/media", requireAdmin, async (req, res) => {
-  const files = await all(`
-    SELECT id, original_name, url, created_at
-    FROM media_files
-    ORDER BY created_at DESC
-  `);
-
-  res.render("admin_media", {
-    layout: false,
-    files,
-  });
+  const files = await all(`SELECT * FROM media_files ORDER BY created_at DESC`);
+  res.render("admin_media", { layout: false, files });
 });
 
 app.post(
@@ -365,20 +280,14 @@ app.post(
   async (req, res) => {
     if (!req.file) return res.redirect("/admin/media");
 
-    const url = "/public/uploads/" + req.file.filename;
-
     await run(
-      `
-      INSERT INTO media_files
-      (original_name, file_name, mime_type, size, url, created_at)
-      VALUES (?,?,?,?,?,?)
-      `,
+      `INSERT INTO media_files VALUES (NULL,?,?,?,?,?,?)`,
       [
         req.file.originalname,
         req.file.filename,
         req.file.mimetype,
         req.file.size,
-        url,
+        "/public/uploads/" + req.file.filename,
         nowISO(),
       ]
     );
@@ -386,3 +295,10 @@ app.post(
     res.redirect("/admin/media");
   }
 );
+
+/* ================= Start ================= */
+initDb().then(() => {
+  app.listen(3000, "127.0.0.1", () =>
+    console.log("✅ Server running on 127.0.0.1:3000")
+  );
+});
