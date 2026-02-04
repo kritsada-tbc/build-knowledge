@@ -1,58 +1,24 @@
-<% const SITE = site || {}; %>
-
 <section class="section-soft">
-  <div class="section-head">
-    <div>
-      <h2><%= pageTitle || "ติดต่อโฆษณา / ลงบทความ" %></h2>
-      <p>ส่งข้อความถึงแอดมิน</p>
-    </div>
-  </div>
+  <h1><%= pageTitle %></h1>
 
-  <div class="grid">
+  <% if (ok) { %>
+    <div class="ok"><%= ok %></div>
+  <% } %>
 
-    <!-- ฟอร์ม -->
-    <div class="card" style="grid-column: span 6;">
-      <% if (ok) { %>
-        <p style="color:var(--accent);"><%= ok %></p>
-      <% } %>
+  <% if (error) { %>
+    <div class="err"><%= error %></div>
+  <% } %>
 
-      <% if (error) { %>
-        <p style="color:#ef4444;"><%= error %></p>
-      <% } %>
+  <form method="post" action="/contact/send" class="card">
+    <label>ชื่อ *</label>
+    <input name="name" required>
 
-      <form method="post" action="/contact/send" class="tool-form">
-        <label>ชื่อ *</label>
-        <input name="name" required>
+    <label>ช่องทางติดต่อ</label>
+    <input name="contact">
 
-        <label>ช่องทางติดต่อ</label>
-        <input name="contact">
+    <label>ข้อความ *</label>
+    <textarea name="message" required></textarea>
 
-        <label>หัวข้อ</label>
-        <input name="subject">
-
-        <label>ข้อความ *</label>
-        <textarea name="message" rows="4" required></textarea>
-
-        <button class="btn primary" type="submit">
-          ส่งข้อความ
-        </button>
-      </form>
-    </div>
-
-    <!-- กล่องข้อมูล -->
-    <div class="card" style="grid-column: span 6;">
-      <h3>ข้อมูลการติดต่อ</h3>
-      <p>
-        • ติดต่อโฆษณา<br>
-        • ฝากลงบทความความรู้<br>
-        • เสนอข้อมูลร้านค้า / แหล่งซื้อ<br>
-      </p>
-
-      <div class="meta">
-        <span class="pill">Admin Inbox</span>
-        <span class="pill">ตอบกลับภายหลัง</span>
-      </div>
-    </div>
-
-  </div>
+    <button class="btn">ส่งข้อความ</button>
+  </form>
 </section>

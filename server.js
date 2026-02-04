@@ -188,3 +188,6 @@ initDb()
     console.error("❌ DB init failed", e);
     process.exit(1);
   });
+
+
+  

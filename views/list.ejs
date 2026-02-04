@@ -1,31 +1,21 @@
-<% const SITE = site || {}; %>
-
 <section class="section-soft">
   <div class="section-head">
     <div>
-      <h2><%= pageTitle %></h2>
+      <h1><%= pageTitle %></h1>
       <p>รายการทั้งหมด</p>
     </div>
   </div>
 
   <% if (!posts || posts.length === 0) { %>
-    <p style="color:var(--muted);">ยังไม่มีรายการ</p>
+    <p class="muted">ยังไม่มีรายการ</p>
   <% } else { %>
-
     <div class="grid">
       <% posts.forEach(p => { %>
         <a class="card" href="/article/<%= p.slug %>">
           <h3><%= p.title %></h3>
           <p><%= p.excerpt || "—" %></p>
-
-          <div class="meta">
-            <span class="pill">
-              <%= new Date(p.created_at).toLocaleDateString("th-TH") %>
-            </span>
-          </div>
         </a>
       <% }) %>
     </div>
-
   <% } %>
 </section>
