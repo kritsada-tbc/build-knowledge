@@ -3,49 +3,28 @@
 <head>
   <meta charset="utf-8">
   <title>Media Library</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-    .card { border: 1px solid #ddd; padding: 8px; }
-    img { max-width: 100%; height: auto; display: block; }
-  </style>
 </head>
 <body>
-
   <h1>Media Library</h1>
-  <a href="/admin/posts">← กลับไปจัดการบทความ</a>
-  <hr>
 
-  <!-- ฟอร์มอัปโหลด -->
   <form action="/admin/media/upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" accept="image/*" required>
+    <input type="file" name="file" required>
     <button type="submit">อัปโหลดรูป</button>
   </form>
 
   <hr>
 
-  <% if (!files || files.length === 0) { %>
+  <% if (!files.length) { %>
     <p>ยังไม่มีไฟล์</p>
   <% } else { %>
-
-    <div class="grid">
-      <% files.forEach(f => { %>
-        <div class="card">
-          <a href="<%= f.url %>" target="_blank">
-            <img src="<%= f.url %>" alt="">
-          </a>
-          <div style="font-size:12px; word-break:break-all;">
-            <%= f.original_name %>
-          </div>
-
-          <form action="/admin/media/<%= f.id %>/delete" method="post" onsubmit="return confirm('ลบไฟล์นี้?')">
-            <button type="submit">ลบ</button>
-          </form>
-        </div>
-      <% }) %>
-    </div>
-
+    <% files.forEach(f => { %>
+      <div style="margin-bottom:12px">
+        <img src="<%= f.url %>" style="max-width:200px;display:block">
+        <input style="width:100%" value="<%= f.url %>" readonly>
+      </div>
+    <% }) %>
   <% } %>
 
+  <a href="/admin/posts">← กลับ</a>
 </body>
 </html>
