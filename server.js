@@ -8,7 +8,6 @@ const sqlite3 = require("sqlite3").verbose();
 const { marked } = require("marked");
 const bcrypt = require("bcrypt");
 const expressLayouts = require("express-ejs-layouts");
-const fs = require("fs");
 
 dotenv.config();
 
@@ -26,7 +25,6 @@ app.use(
     secret: process.env.SESSION_SECRET || "dev_secret",
     resave: false,
     saveUninitialized: false,
-    cookie: { httpOnly: true, sameSite: "lax" },
   })
 );
 
@@ -42,29 +40,20 @@ app.set("layout", "layout_public");
 const db = new sqlite3.Database(path.join(__dirname, "data.db"));
 
 const run = (sql, p = []) =>
-  new Promise((res, rej) =>
-    db.run(sql, p, function (e) {
-      e ? rej(e) : res(this);
-    })
-  );
+  new Promise((res, rej) => db.run(sql, p, e => e ? rej(e) : res()));
 
 const get = (sql, p = []) =>
-  new Promise((res, rej) =>
-    db.get(sql, p, (e, r) => (e ? rej(e) : res(r)))
-  );
+  new Promise((res, rej) => db.get(sql, p, (e, r) => e ? rej(e) : res(r)));
 
 const all = (sql, p = []) =>
-  new Promise((res, rej) =>
-    db.all(sql, p, (e, r) => (e ? rej(e) : res(r)))
-  );
+  new Promise((res, rej) => db.all(sql, p, (e, r) => e ? rej(e) : res(r)));
 
-/* ================= GLOBAL LOCALS (สำคัญมาก) ================= */
+/* ================= Global locals ================= */
 app.use(async (req, res, next) => {
   try {
-    const rows = await all(`SELECT key, value FROM site_settings`);
+    const rows = await all(`SELECT key,value FROM site_settings`);
     const site = {};
     rows.forEach(r => site[r.key] = r.value);
-
     res.locals.site = site;
     res.locals.pageTitle = site.site_name || "เว็บไซต์";
   } catch {
@@ -76,9 +65,7 @@ app.use(async (req, res, next) => {
 
 /* ================= Helpers ================= */
 const nowISO = () => new Date().toISOString();
-const mdToHtml = (md) => marked.parse(md || "");
-const requireAdmin = (req, res, next) =>
-  req.session?.isAdmin ? next() : res.redirect("/admin/login");
+const mdToHtml = md => marked.parse(md || "");
 
 /* ================= Init DB ================= */
 async function initDb() {
@@ -98,29 +85,6 @@ async function initDb() {
   }
 
   await run(`
-    CREATE TABLE IF NOT EXISTS admin_users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT UNIQUE,
-      password_hash TEXT,
-      created_at TEXT,
-      updated_at TEXT
-    )
-  `);
-
-  const a = await get(`SELECT COUNT(*) c FROM admin_users`);
-  if (a.c === 0) {
-    await run(
-      `INSERT INTO admin_users VALUES (NULL,?,?,?,?)`,
-      [
-        process.env.ADMIN_USER || "admin",
-        await bcrypt.hash(process.env.ADMIN_PASS || "admin1234", 12),
-        nowISO(),
-        nowISO(),
-      ]
-    );
-  }
-
-  await run(`
     CREATE TABLE IF NOT EXISTS posts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT,
@@ -135,33 +99,44 @@ async function initDb() {
   `);
 }
 
-
 /* ================= Public ================= */
 
 // หน้าแรก
 app.get("/", async (req, res) => {
-  const posts = await all(
-    `SELECT * FROM posts WHERE is_published=1 ORDER BY created_at DESC LIMIT 5`
-  );
+  const posts = await all(`
+    SELECT title, slug, created_at
+    FROM posts
+    WHERE is_published=1
+    ORDER BY created_at DESC
+    LIMIT 5
+  `);
+
   res.render("index", { posts });
 });
 
-/* ================= Articles List ================= */
-app.get("/articles", async (req, res) => {
-  const posts = await all(`
-    SELECT id, title, slug, created_at
-    FROM posts
-    WHERE is_published=1 AND type='article'
-    ORDER BY created_at DESC
-  `);
+// helper list
+async function renderList(res, type, title) {
+  const posts = await all(
+    `SELECT title, slug, created_at
+     FROM posts
+     WHERE is_published=1 AND type=?
+     ORDER BY created_at DESC`,
+    [type]
+  );
 
   res.render("list", {
+    pageTitle: title,
     posts,
-    pageTitle: "บทความทั้งหมด",
   });
-});
+}
 
-/* ================= Single Article ================= */
+// list pages
+app.get("/articles", (_, res) => renderList(res, "article", "บทความ"));
+app.get("/materials", (_, res) => renderList(res, "material", "วัสดุก่อสร้าง"));
+app.get("/tools",     (_, res) => renderList(res, "tool", "เครื่องมือ"));
+app.get("/dealers",   (_, res) => renderList(res, "dealer", "แหล่งซื้อ"));
+
+// article detail
 app.get("/article/:slug", async (req, res) => {
   const post = await get(
     `SELECT * FROM posts WHERE slug=? AND is_published=1`,
@@ -171,94 +146,9 @@ app.get("/article/:slug", async (req, res) => {
   if (!post) return res.status(404).send("ไม่พบบทความ");
 
   res.render("article", {
-    post,
-    pageTitle: post.title,
-  });
-});
-
-
-// helper แสดง list ตาม type
-async function renderList(req, res, type, pageTitle) {
-  const posts = await all(
-    `
-    SELECT title, slug, content_html, created_at
-    FROM posts
-    WHERE is_published=1 AND type=?
-    ORDER BY datetime(created_at) DESC
-    `,
-    [type]
-  );
-
-  res.render("list", {
-    pageTitle,
-    posts,
-  });
-}
-
-// ===== list pages =====
-app.get("/articles", (req, res) =>
-  renderList(req, res, "article", "บทความ")
-);
-
-app.get("/materials", (req, res) =>
-  renderList(req, res, "material", "วัสดุก่อสร้าง")
-);
-
-app.get("/tools", (req, res) =>
-  renderList(req, res, "tool", "เครื่องมือ")
-);
-
-app.get("/dealers", (req, res) =>
-  renderList(req, res, "dealer", "แหล่งซื้อ")
-);
-
-// ===== article detail =====
-app.get("/article/:slug", async (req, res) => {
-  const post = await get(
-    `
-    SELECT *
-    FROM posts
-    WHERE slug=? AND is_published=1
-    `,
-    [req.params.slug]
-  );
-
-  if (!post) {
-    return res.status(404).send("ไม่พบบทความ");
-  }
-
-  res.render("article", {
     pageTitle: post.title,
     post,
   });
-});
-
-
-/* ================= Admin ================= */
-app.get("/admin/login", (req, res) =>
-  res.render("admin_login", { layout: false, error: null })
-);
-
-app.post("/admin/login", async (req, res) => {
-  const u = await get(`SELECT * FROM admin_users WHERE username=?`, [
-    req.body.user,
-  ]);
-
-  if (!u || !(await bcrypt.compare(req.body.pass, u.password_hash))) {
-    return res.render("admin_login", {
-      layout: false,
-      error: "Login ไม่ถูกต้อง",
-    });
-  }
-
-  req.session.isAdmin = true;
-  req.session.adminUserId = u.id;
-  res.redirect("/admin/posts");
-});
-
-app.get("/admin/posts", requireAdmin, async (req, res) => {
-  const posts = await all(`SELECT * FROM posts ORDER BY updated_at DESC`);
-  res.render("admin_list", { layout: false, posts });
 });
 
 /* ================= Error ================= */
@@ -271,14 +161,10 @@ app.use((err, req, res, next) => {
 initDb()
   .then(() => {
     app.listen(PORT, "0.0.0.0", () => {
-  console.log(`✅ Server → http://0.0.0.0:${PORT}`);
-});
-
+      console.log(`✅ Server running on port ${PORT}`);
+    });
   })
-  .catch((e) => {
-    console.error("❌ DB init failed", e);
+  .catch(err => {
+    console.error("❌ DB init failed", err);
     process.exit(1);
   });
-
-
-  
