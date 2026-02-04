@@ -12,7 +12,7 @@ const expressLayouts = require("express-ejs-layouts");
 dotenv.config();
 
 const app = express();
-const PORT = Number(process.env.PORT || 3000);
+const PORT = process.env.PORT || 3000;
 
 /* ================= Middleware ================= */
 app.use(helmet({ contentSecurityPolicy: false }));
@@ -39,16 +39,6 @@ app.set("layout", "layout_public");
 /* ================= Database ================= */
 const db = new sqlite3.Database(path.join(__dirname, "data.db"));
 
-const all = (sql, p = []) =>
-  new Promise((res, rej) =>
-    db.all(sql, p, (e, r) => (e ? rej(e) : res(r)))
-  );
-
-const get = (sql, p = []) =>
-  new Promise((res, rej) =>
-    db.get(sql, p, (e, r) => (e ? rej(e) : res(r)))
-  );
-
 const run = (sql, p = []) =>
   new Promise((res, rej) =>
     db.run(sql, p, function (e) {
@@ -56,7 +46,17 @@ const run = (sql, p = []) =>
     })
   );
 
-/* ================= Global locals (สำคัญมาก) ================= */
+const get = (sql, p = []) =>
+  new Promise((res, rej) =>
+    db.get(sql, p, (e, r) => (e ? rej(e) : res(r)))
+  );
+
+const all = (sql, p = []) =>
+  new Promise((res, rej) =>
+    db.all(sql, p, (e, r) => (e ? rej(e) : res(r)))
+  );
+
+/* ================= GLOBAL LOCALS ================= */
 app.use(async (req, res, next) => {
   try {
     const rows = await all(`SELECT key,value FROM site_settings`);
@@ -71,6 +71,13 @@ app.use(async (req, res, next) => {
   next();
 });
 
+/* ================= Helpers ================= */
+const nowISO = () => new Date().toISOString();
+const mdToHtml = md => marked.parse(md || "");
+
+const requireAdmin = (req, res, next) =>
+  req.session?.isAdmin ? next() : res.redirect("/admin/login");
+
 /* ================= Init DB ================= */
 async function initDb() {
   await run(`
@@ -80,11 +87,21 @@ async function initDb() {
     )
   `);
 
-  const s = await get(`SELECT COUNT(*) c FROM site_settings`);
-  if (s.c === 0) {
+  await run(`
+    CREATE TABLE IF NOT EXISTS admin_users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT,
+      password_hash TEXT,
+      created_at TEXT,
+      updated_at TEXT
+    )
+  `);
+
+  const admin = await get(`SELECT COUNT(*) c FROM admin_users`);
+  if (admin.c === 0) {
     await run(
-      `INSERT INTO site_settings VALUES (?,?)`,
-      ["site_name", "ศูนย์ความรู้วัสดุก่อสร้าง"]
+      `INSERT INTO admin_users VALUES (NULL,?,?,?,?)`,
+      ["admin", await bcrypt.hash("admin1234", 10), nowISO(), nowISO()]
     );
   }
 
@@ -93,7 +110,6 @@ async function initDb() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT,
       slug TEXT UNIQUE,
-      content_md TEXT,
       content_html TEXT,
       type TEXT,
       is_published INTEGER,
@@ -102,13 +118,10 @@ async function initDb() {
   `);
 }
 
-/* ================= Public Routes ================= */
-
-// หน้าแรก
+/* ================= Public ================= */
 app.get("/", async (req, res) => {
   const posts = await all(`
-    SELECT title,slug,created_at
-    FROM posts
+    SELECT * FROM posts
     WHERE is_published=1
     ORDER BY created_at DESC
     LIMIT 5
@@ -116,63 +129,62 @@ app.get("/", async (req, res) => {
   res.render("index", { posts });
 });
 
-// list กลาง (ใช้ร่วมกันทุกหมวด)
-async function renderList(req, res, type, title) {
-  const posts = await all(
-    `
-    SELECT title,slug,created_at
-    FROM posts
-    WHERE is_published=1 AND type=?
-    ORDER BY created_at DESC
-    `,
-    [type]
-  );
-
-  res.render("list", {
-    posts,
-    pageTitle: title,
-  });
+function renderList(type, title) {
+  return async (req, res) => {
+    const posts = await all(
+      `SELECT title,slug,created_at FROM posts WHERE is_published=1 AND type=?`,
+      [type]
+    );
+    res.render("list", { posts, pageTitle: title });
+  };
 }
 
-app.get("/articles", (req, res) =>
-  renderList(req, res, "article", "บทความ")
-);
+app.get("/articles", renderList("article", "บทความ"));
+app.get("/materials", renderList("material", "วัสดุ"));
+app.get("/tools", renderList("tool", "เครื่องมือ"));
+app.get("/dealers", renderList("dealer", "แหล่งซื้อ"));
 
-app.get("/materials", (req, res) =>
-  renderList(req, res, "material", "วัสดุก่อสร้าง")
-);
-
-app.get("/tools", (req, res) =>
-  renderList(req, res, "tool", "เครื่องมือ")
-);
-
-app.get("/dealers", (req, res) =>
-  renderList(req, res, "dealer", "แหล่งซื้อ")
-);
-
-// บทความเดี่ยว
 app.get("/article/:slug", async (req, res) => {
   const post = await get(
     `SELECT * FROM posts WHERE slug=? AND is_published=1`,
     [req.params.slug]
   );
-
   if (!post) return res.status(404).send("ไม่พบบทความ");
+  res.render("article", { post, pageTitle: post.title });
+});
 
-  res.render("article", {
-    post,
-    pageTitle: post.title,
+/* ================= Admin ================= */
+app.get("/admin/login", (req, res) =>
+  res.render("admin_login", { layout: false, error: null })
+);
+
+app.post("/admin/login", async (req, res) => {
+  const u = await get(`SELECT * FROM admin_users WHERE username=?`, [req.body.user]);
+  if (!u || !(await bcrypt.compare(req.body.pass, u.password_hash))) {
+    return res.render("admin_login", { layout: false, error: "Login ผิด" });
+  }
+  req.session.isAdmin = true;
+  res.redirect("/admin/posts");
+});
+
+app.get("/admin/posts", requireAdmin, async (req, res) => {
+  const posts = await all(`SELECT * FROM posts`);
+  res.render("admin_list", {
+    layout: false,
+    posts,
+    type: "article" // ⭐ สำคัญ
   });
 });
 
 /* ================= Error ================= */
-app.use((req, res) => {
-  res.status(404).send("404 Not Found");
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).send("Server error");
 });
 
 /* ================= Start ================= */
 initDb().then(() => {
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`✅ Server running on port ${PORT}`);
+  app.listen(3000, "127.0.0.1", () => {
+    console.log("✅ Server running on 127.0.0.1:3000");
   });
 });
