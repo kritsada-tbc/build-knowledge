@@ -168,13 +168,20 @@ app.post("/admin/login", async (req, res) => {
 });
 
 app.get("/admin/posts", requireAdmin, async (req, res) => {
-  const posts = await all(`SELECT * FROM posts`);
+  const type = req.query.type || "article";
+
+  const posts = await all(
+    `SELECT * FROM posts WHERE type=? ORDER BY updated_at DESC`,
+    [type]
+  );
+
   res.render("admin_list", {
     layout: false,
     posts,
-    type: "article" // ⭐ สำคัญ
+    type, // ⭐ สำคัญมาก
   });
 });
+
 
 /* ================= Error ================= */
 app.use((err, req, res, next) => {
