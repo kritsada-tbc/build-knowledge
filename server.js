@@ -129,6 +129,19 @@ async function initDb() {
   )
 `);
 
+  await run(`
+  CREATE TABLE IF NOT EXISTS media_files (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    original_name TEXT,
+    file_name TEXT,
+    mime_type TEXT,
+    size INTEGER,
+    url TEXT,
+    created_at TEXT
+  )
+`);
+
+
 }
 
 /* ================= Public ================= */
@@ -310,3 +323,66 @@ initDb().then(() => {
     console.log("✅ Server running on 127.0.0.1:3000");
   });
 });
+
+
+/* ================= Media Upload ================= */
+const uploadDir = path.join(__dirname, "public/uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, Date.now() + "-" + Math.random().toString(16).slice(2) + ext);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 8 * 1024 * 1024 },
+});
+
+/* ================= Media Library ================= */
+app.get("/admin/media", requireAdmin, async (req, res) => {
+  const files = await all(`
+    SELECT id, original_name, url, created_at
+    FROM media_files
+    ORDER BY created_at DESC
+  `);
+
+  res.render("admin_media", {
+    layout: false,
+    files,
+  });
+});
+
+app.post(
+  "/admin/media/upload",
+  requireAdmin,
+  upload.single("file"),
+  async (req, res) => {
+    if (!req.file) return res.redirect("/admin/media");
+
+    const url = "/public/uploads/" + req.file.filename;
+
+    await run(
+      `
+      INSERT INTO media_files
+      (original_name, file_name, mime_type, size, url, created_at)
+      VALUES (?,?,?,?,?,?)
+      `,
+      [
+        req.file.originalname,
+        req.file.filename,
+        req.file.mimetype,
+        req.file.size,
+        url,
+        nowISO(),
+      ]
+    );
+
+    res.redirect("/admin/media");
+  }
+);
