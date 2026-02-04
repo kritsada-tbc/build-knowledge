@@ -116,6 +116,19 @@ async function initDb() {
       created_at TEXT
     )
   `);
+
+
+  await run(`
+  CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    contact TEXT,
+    subject TEXT,
+    message TEXT,
+    created_at TEXT
+  )
+`);
+
 }
 
 /* ================= Public ================= */
@@ -181,6 +194,36 @@ app.get("/admin/posts", requireAdmin, async (req, res) => {
     type, // ⭐ สำคัญมาก
   });
 });
+
+app.get("/admin/messages", requireAdmin, async (req, res) => {
+  const messages = await all(`
+    SELECT * FROM messages
+    ORDER BY created_at DESC
+  `);
+
+  res.render("admin_messages", {
+    layout: false,
+    messages
+  });
+});
+
+app.get("/admin/media", requireAdmin, async (req, res) => {
+  const uploadDir = path.join(__dirname, "public/uploads");
+  let files = [];
+
+  if (fs.existsSync(uploadDir)) {
+    files = fs.readdirSync(uploadDir).map(f => ({
+      name: f,
+      url: "/public/uploads/" + f
+    }));
+  }
+
+  res.render("admin_media", {
+    layout: false,
+    files
+  });
+});
+
 
 // ===== Admin: New Post =====
 app.get("/admin/posts/new", requireAdmin, async (req, res) => {
