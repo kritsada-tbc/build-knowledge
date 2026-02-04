@@ -135,13 +135,73 @@ async function initDb() {
   `);
 }
 
+
 /* ================= Public ================= */
+
+// หน้าแรก
 app.get("/", async (req, res) => {
   const posts = await all(
     `SELECT * FROM posts WHERE is_published=1 ORDER BY created_at DESC LIMIT 5`
   );
   res.render("index", { posts });
 });
+
+// helper แสดง list ตาม type
+async function renderList(req, res, type, pageTitle) {
+  const posts = await all(
+    `
+    SELECT title, slug, content_html, created_at
+    FROM posts
+    WHERE is_published=1 AND type=?
+    ORDER BY datetime(created_at) DESC
+    `,
+    [type]
+  );
+
+  res.render("list", {
+    pageTitle,
+    posts,
+  });
+}
+
+// ===== list pages =====
+app.get("/articles", (req, res) =>
+  renderList(req, res, "article", "บทความ")
+);
+
+app.get("/materials", (req, res) =>
+  renderList(req, res, "material", "วัสดุก่อสร้าง")
+);
+
+app.get("/tools", (req, res) =>
+  renderList(req, res, "tool", "เครื่องมือ")
+);
+
+app.get("/dealers", (req, res) =>
+  renderList(req, res, "dealer", "แหล่งซื้อ")
+);
+
+// ===== article detail =====
+app.get("/article/:slug", async (req, res) => {
+  const post = await get(
+    `
+    SELECT *
+    FROM posts
+    WHERE slug=? AND is_published=1
+    `,
+    [req.params.slug]
+  );
+
+  if (!post) {
+    return res.status(404).send("ไม่พบบทความ");
+  }
+
+  res.render("article", {
+    pageTitle: post.title,
+    post,
+  });
+});
+
 
 /* ================= Admin ================= */
 app.get("/admin/login", (req, res) =>
