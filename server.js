@@ -296,6 +296,62 @@ app.post(
   }
 );
 
+// ================= SIMPLE IMAGE UPLOAD =================
+const multer = require("multer");
+const fs = require("fs");
+
+const uploadDir = path.join(__dirname, "public/uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: uploadDir,
+    filename: (req, file, cb) => {
+      const ext = path.extname(file.originalname);
+      cb(null, Date.now() + ext);
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+});
+
+// หน้าอัปโหลดรูป (admin)
+app.get("/admin/upload", requireAdmin, (req, res) => {
+  res.send(`
+    <h2>อัปโหลดรูป</h2>
+    <form method="POST" action="/admin/upload" enctype="multipart/form-data">
+      <input type="file" name="image" required />
+      <br><br>
+      <button type="submit">อัปโหลด</button>
+    </form>
+    <p>หลังอัปโหลด จะได้ลิงก์รูปไปแปะในบทความ</p>
+    <a href="/admin/posts">← กลับ</a>
+  `);
+});
+
+// รับไฟล์รูป
+app.post(
+  "/admin/upload",
+  requireAdmin,
+  upload.single("image"),
+  (req, res) => {
+    if (!req.file) return res.send("อัปโหลดไม่สำเร็จ");
+
+    const url = "/public/uploads/" + req.file.filename;
+
+    res.send(`
+      <h3>อัปโหลดสำเร็จ</h3>
+      <p>คัดลอก URL นี้ไปใช้:</p>
+      <input style="width:100%" value="${url}" />
+      <p>ตัวอย่างโค้ด:</p>
+      <pre>&lt;img src="${url}" alt="" /&gt;</pre>
+      <a href="/admin/upload">อัปโหลดรูปอื่น</a>
+    `);
+  }
+);
+
+
 /* ================= Start ================= */
 initDb().then(() => {
   app.listen(3000, "127.0.0.1", () =>
