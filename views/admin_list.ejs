@@ -52,7 +52,8 @@
           <b>ประเภทปัจจุบัน:</b> <span class="tag"><%= type || "article" %></span>
           <div class="small">เพิ่ม/แก้ไข/เผยแพร่ ได้จากหน้านี้</div>
         </div>
-        <a class="btn primary" href="/admin/posts/new?type=<%= type || 'article' %>">+ เพิ่มรายการ</a>
+        <a class="btn primary" href="/admin/posts/new?type=<%= typeof type !== "undefined" ? type : "article" %>
+">+ เพิ่มรายการ</a>
       </div>
 
       <table>
