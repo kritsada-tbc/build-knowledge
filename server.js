@@ -7,7 +7,6 @@ const dotenv = require("dotenv");
 const sqlite3 = require("sqlite3").verbose();
 const { marked } = require("marked");
 const bcrypt = require("bcrypt");
-const multer = require("multer");
 const expressLayouts = require("express-ejs-layouts");
 const fs = require("fs");
 
@@ -59,12 +58,13 @@ const all = (sql, p = []) =>
     db.all(sql, p, (e, r) => (e ? rej(e) : res(r)))
   );
 
-/* ================= Load site_settings (ถูกที่แล้ว) ================= */
+/* ================= GLOBAL LOCALS (สำคัญมาก) ================= */
 app.use(async (req, res, next) => {
   try {
     const rows = await all(`SELECT key, value FROM site_settings`);
     const site = {};
-    rows.forEach((r) => (site[r.key] = r.value));
+    rows.forEach(r => site[r.key] = r.value);
+
     res.locals.site = site;
     res.locals.pageTitle = site.site_name || "เว็บไซต์";
   } catch {
@@ -77,9 +77,6 @@ app.use(async (req, res, next) => {
 /* ================= Helpers ================= */
 const nowISO = () => new Date().toISOString();
 const mdToHtml = (md) => marked.parse(md || "");
-const safeType = (t) =>
-  ["article", "material", "tool", "dealer"].includes(t) ? t : "article";
-
 const requireAdmin = (req, res, next) =>
   req.session?.isAdmin ? next() : res.redirect("/admin/login");
 
@@ -92,8 +89,8 @@ async function initDb() {
     )
   `);
 
-  const c = await get(`SELECT COUNT(*) c FROM site_settings`);
-  if (c.c === 0) {
+  const s = await get(`SELECT COUNT(*) c FROM site_settings`);
+  if (s.c === 0) {
     await run(
       `INSERT INTO site_settings VALUES (?,?)`,
       ["site_name", "ศูนย์ความรู้วัสดุก่อสร้าง"]
@@ -110,8 +107,8 @@ async function initDb() {
     )
   `);
 
-  const adminCount = await get(`SELECT COUNT(*) c FROM admin_users`);
-  if (adminCount.c === 0) {
+  const a = await get(`SELECT COUNT(*) c FROM admin_users`);
+  if (a.c === 0) {
     await run(
       `INSERT INTO admin_users VALUES (NULL,?,?,?,?)`,
       [
@@ -155,11 +152,13 @@ app.post("/admin/login", async (req, res) => {
   const u = await get(`SELECT * FROM admin_users WHERE username=?`, [
     req.body.user,
   ]);
-  if (!u || !(await bcrypt.compare(req.body.pass, u.password_hash)))
+
+  if (!u || !(await bcrypt.compare(req.body.pass, u.password_hash))) {
     return res.render("admin_login", {
       layout: false,
       error: "Login ไม่ถูกต้อง",
     });
+  }
 
   req.session.isAdmin = true;
   req.session.adminUserId = u.id;
@@ -173,7 +172,7 @@ app.get("/admin/posts", requireAdmin, async (req, res) => {
 
 /* ================= Error ================= */
 app.use((err, req, res, next) => {
-  console.error("❌ ERROR:", err);
+  console.error("❌ SERVER ERROR:", err);
   res.status(500).send("Server error");
 });
 

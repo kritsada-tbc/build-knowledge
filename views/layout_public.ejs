@@ -5,25 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <title>
-    <%= typeof pageTitle !== "undefined"
+    <%= (typeof pageTitle !== "undefined" && pageTitle)
       ? pageTitle
-      : (site.site_name || "เว็บไซต์") %>
+      : (site?.site_name || "เว็บไซต์") %>
   </title>
 
-  <meta name="description" content="<%= site.meta_description || '' %>">
-
+  <meta name="description" content="<%= site?.meta_description || '' %>">
   <link rel="stylesheet" href="/public/theme.css">
 </head>
 <body>
 
-  <!-- Topbar -->
   <div class="topbar">
     <div class="container nav">
       <a class="brand" href="/">
-        <div class="logo"><%= site.logo_text || "B" %></div>
+        <div class="logo"><%= site?.logo_text || "B" %></div>
         <div>
-          <%= site.site_name || "เว็บไซต์" %>
-          <div class="small"><%= site.site_tagline || "" %></div>
+          <%= site?.site_name || "เว็บไซต์" %>
+          <div class="small"><%= site?.site_tagline || "" %></div>
         </div>
       </a>
 
@@ -46,7 +44,7 @@
 
   <footer class="site-footer">
     <div class="container">
-      © <%= new Date().getFullYear() %> <%= site.site_name || "" %>
+      © <%= new Date().getFullYear() %> <%= site?.site_name || "" %>
     </div>
   </footer>
 
