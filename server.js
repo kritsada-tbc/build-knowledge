@@ -182,6 +182,78 @@ app.get("/admin/posts", requireAdmin, async (req, res) => {
   });
 });
 
+// ===== Admin: New Post =====
+app.get("/admin/posts/new", requireAdmin, async (req, res) => {
+  const type = req.query.type || "article";
+
+  res.render("admin_edit", {
+    layout: false,
+    pageTitle: "เพิ่มบทความ",
+    mode: "new",
+    type,
+    post: {
+      id: null,
+      title: "",
+      slug: "",
+      content_md: "",
+      content_html: "",
+      is_published: 0,
+      type,
+    },
+    error: null,
+  });
+});
+
+// ===== Admin: Edit Post =====
+app.get("/admin/posts/:id/edit", requireAdmin, async (req, res) => {
+  const post = await get(`SELECT * FROM posts WHERE id=?`, [req.params.id]);
+  if (!post) return res.status(404).send("ไม่พบโพสต์");
+
+  res.render("admin_edit", {
+    layout: false,
+    pageTitle: "แก้ไขบทความ",
+    mode: "edit",
+    type: post.type,
+    post,
+    error: null,
+  });
+});
+
+// ===== Admin: Save Post =====
+app.post("/admin/posts/save", requireAdmin, async (req, res) => {
+  const {
+    id,
+    title,
+    content_md,
+    type,
+    is_published
+  } = req.body;
+
+  const slug = title
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\u0E00-\u0E7Fa-z0-9\-]/g, "");
+
+  const html = mdToHtml(content_md);
+  const now = nowISO();
+
+  if (id) {
+    await run(
+      `UPDATE posts SET title=?, slug=?, content_md=?, content_html=?, is_published=?, updated_at=? WHERE id=?`,
+      [title, slug, content_md, html, is_published ? 1 : 0, now, id]
+    );
+  } else {
+    await run(
+      `INSERT INTO posts (title, slug, content_md, content_html, type, is_published, created_at, updated_at)
+       VALUES (?,?,?,?,?,?,?,?)`,
+      [title, slug, content_md, html, type, is_published ? 1 : 0, now, now]
+    );
+  }
+
+  res.redirect("/admin/posts");
+});
+
+
 
 /* ================= Error ================= */
 app.use((err, req, res, next) => {
