@@ -1,21 +1,29 @@
-<section class="section-soft">
-  <div class="section-head">
-    <div>
-      <h1><%= pageTitle %></h1>
-      <p>รายการทั้งหมด</p>
-    </div>
+<section class="page-wrap">
+  <h1 class="page-title"><%= pageTitle %></h1>
+  <div class="page-subtitle">
+    บทความเชิงความรู้ เรียบเรียงเพื่อใช้งานจริง
   </div>
 
   <% if (!posts || posts.length === 0) { %>
-    <p class="muted">ยังไม่มีรายการ</p>
+    <p style="text-align:center;color:var(--muted);">
+      ยังไม่มีข้อมูลในหมวดนี้
+    </p>
   <% } else { %>
-    <div class="grid">
+    <div class="list-grid">
       <% posts.forEach(p => { %>
-        <a class="card" href="/article/<%= p.slug %>">
+        <a class="list-card" href="/article/<%= p.slug %>">
           <h3><%= p.title %></h3>
-          <p><%= p.excerpt || "—" %></p>
+
+          <% if (p.excerpt) { %>
+            <p><%= p.excerpt %></p>
+          <% } %>
+
+          <div class="list-meta">
+            <%= new Date(p.created_at).toLocaleDateString("th-TH") %>
+          </div>
         </a>
       <% }) %>
     </div>
   <% } %>
 </section>
+

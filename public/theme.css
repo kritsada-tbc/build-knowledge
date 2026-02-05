@@ -679,3 +679,113 @@ a{ color:inherit; text-decoration:none; }
   }
 }
 
+/* ====== Article / List – Formal Style ====== */
+
+.page-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+/* หัวข้อหน้า */
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  text-align: center;
+  color: var(--muted);
+  margin-bottom: 32px;
+  font-size: 14px;
+}
+
+/* ====== Card List ====== */
+.list-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.list-card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.04);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.list-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0,0,0,.06);
+}
+
+.list-card h3 {
+  font-size: 20px;
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.list-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.list-meta {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ====== Article Content ====== */
+.article {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 16px;
+}
+
+.article h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.article .meta {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+
+/* รูปในบทความ */
+.article img {
+  display: block;
+  max-width: 90%;
+  height: auto;
+  margin: 28px auto;
+  border-radius: 14px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.08);
+}
+
+/* เนื้อหา */
+.article .content {
+  font-size: 16px;
+  line-height: 1.9;
+  color: #222;
+}
+
+.article .content h2,
+.article .content h3 {
+  margin-top: 36px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.article .content p {
+  margin-bottom: 18px;
+}
