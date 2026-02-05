@@ -893,3 +893,48 @@ a{ color:inherit; text-decoration:none; }
     font-size: 26px;
   }
 }
+
+/* ======================================
+   IMAGE FIX — FINAL (LOCKED & FORMAL)
+   ====================================== */
+
+/* ครอบเนื้อหาบทความ */
+.article,
+.article-content,
+.page-content {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* รูปภาพทุกภาพในบทความ */
+.article img,
+.article-content img,
+.page-content img {
+  display: block;
+  max-width: 100%;        /* ❗ ห้ามเกินกรอบ */
+  height: auto;
+  margin: 28px auto;     /* ❗ จัดกึ่งกลางจริง */
+  border-radius: 16px;   /* ขอบมนทางการ */
+  box-shadow: 0 10px 28px rgba(0,0,0,.08);
+  object-fit: contain;   /* ❗ ไม่ยืด ไม่ครอป */
+}
+
+/* ป้องกันรูปใหญ่เกินจอใน desktop */
+@media (min-width: 1024px) {
+  .article img,
+  .article-content img,
+  .page-content img {
+    max-width: 90%;
+  }
+}
+
+/* mobile */
+@media (max-width: 640px) {
+  .article img,
+  .article-content img,
+  .page-content img {
+    max-width: 100%;
+    margin: 20px auto;
+    border-radius: 12px;
+  }
+}
