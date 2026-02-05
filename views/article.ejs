@@ -1,16 +1,14 @@
-<article class="article">
-  <h1><%= post.title %></h1>
+<article class="doc">
 
-  <div class="meta">
+  <h1 class="doc-title"><%= post.title %></h1>
+
+  <div class="doc-meta">
     <%= new Date(post.created_at).toLocaleDateString("th-TH") %>
   </div>
 
-  <div class="content">
-  <%- post.content_html %>
-</div>
-
-
-  <div style="margin-top:40px;text-align:center;">
-    <a href="/articles">← กลับไปหน้าบทความ</a>
+  <div class="doc-content">
+    <%- post.content_html %>
   </div>
+
 </article>
+

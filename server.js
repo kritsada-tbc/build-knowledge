@@ -171,9 +171,15 @@ app.get("/article/:slug", async (req, res) => {
     `SELECT * FROM posts WHERE slug=? AND is_published=1`,
     [req.params.slug]
   );
+
   if (!post) return res.status(404).send("ไม่พบบทความ");
-  res.render("article", { post, pageTitle: post.title });
+
+  res.render("article", {
+    post,
+    pageTitle: post.title,
+  });
 });
+
 
 /* ================= Admin ================= */
 app.get("/admin/login", (req, res) =>
