@@ -789,3 +789,107 @@ a{ color:inherit; text-decoration:none; }
 .article .content p {
   margin-bottom: 18px;
 }
+
+/* ===============================
+   OFFICIAL ARTICLE / LIST STYLE
+   =============================== */
+
+/* กล่องเนื้อหาหลัก */
+.article,
+.list-page,
+.page-content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 20px;
+  line-height: 1.8;
+  font-size: 17px;
+  color: #1f2937; /* เทาเข้ม */
+}
+
+/* หัวข้อบทความ */
+.article h1,
+.page-content h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+/* หัวข้อย่อย */
+.article h2,
+.article h3 {
+  margin-top: 32px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+/* meta วันที่ */
+.article .meta {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+/* ===============================
+   IMAGE FIX (สำคัญที่สุด)
+   =============================== */
+
+/* รูปในบทความทั้งหมด */
+.article img,
+.page-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 24px auto;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+/* ป้องกันรูปยืดเกิน */
+.article img {
+  object-fit: contain;
+}
+
+/* ===============================
+   LIST PAGE (articles, tools ฯลฯ)
+   =============================== */
+
+.list-page .item,
+.article-list-item {
+  padding: 20px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.list-page .item:last-child {
+  border-bottom: none;
+}
+
+.article-list-item h3 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.article-list-item a {
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.article-list-item a:hover {
+  text-decoration: underline;
+}
+
+/* ===============================
+   MOBILE
+   =============================== */
+@media (max-width: 640px) {
+  .article,
+  .list-page,
+  .page-content {
+    padding: 20px 14px;
+    font-size: 16px;
+  }
+
+  .article h1 {
+    font-size: 26px;
+  }
+}
