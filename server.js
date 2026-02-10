@@ -312,6 +312,26 @@ app.get("/admin/site", requireAdmin, async (req, res) => {
   });
 });
 
+app.post("/admin/site/save", requireAdmin, async (req, res) => {
+  const {
+    ad_image_url,
+    ad_link_url
+  } = req.body;
+
+  await db.run(
+    `UPDATE site_settings
+     SET ad_image_url = ?,
+         ad_link_url  = ?`,
+    [
+      ad_image_url || null,
+      ad_link_url  || null
+    ]
+  );
+
+  res.redirect("/admin/site");
+});
+
+
 
 /* ================= Start ================= */
 initDb().then(() => {
