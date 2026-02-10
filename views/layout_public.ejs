@@ -15,29 +15,6 @@
 </head>
 <body>
 
-  <div class="topbar">
-    <div class="container nav">
-      <a class="brand" href="/">
-        <div class="logo"><%= site?.logo_text || "B" %></div>
-        <div>
-          <%= site?.site_name || "เว็บไซต์" %>
-          <div class="small"><%= site?.site_tagline || "" %></div>
-        </div>
-      </a>
-
-      <nav class="navlinks">
-        <a href="/articles">บทความ</a>
-        <a href="/materials">วัสดุ</a>
-        <a href="/tools">เครื่องมือ</a>
-        <a href="/dealers">แหล่งซื้อ</a>
-      </nav>
-
-      <div class="actions">
-        <a class="btn" href="/contact">ติดต่อ</a>
-      </div>
-    </div>
-  </div>
-
   <main class="container">
     <%- body %>
   </main>
