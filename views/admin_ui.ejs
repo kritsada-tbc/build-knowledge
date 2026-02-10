@@ -34,32 +34,6 @@
 
     <p class="small">แก้ “ข้อความ + สี + รูป” ของหน้าเว็บหลักได้จากหน้านี้</p>
 
-    <!-- ===== Save text + colors + URLs ===== -->
-    <form method="post" action="/admin/ui/save">
-      <div class="grid">
-        <div>
-          <h3>ข้อความหน้าเว็บ</h3>
-
-          <label>ชื่อเว็บ (site_name)</label>
-          <input name="site_name" value="<%= site.site_name || '' %>"/>
-
-          <label>คำอธิบายเว็บ (meta_description)</label>
-          <input name="meta_description" value="<%= site.meta_description || '' %>"/>
-
-          <label>Hero Title</label>
-          <textarea name="hero_title"><%= site.hero_title || '' %></textarea>
-
-          <label>Hero Subtitle</label>
-          <textarea name="hero_subtitle"><%= site.hero_subtitle || '' %></textarea>
-        </div> 
-      </div>
-
-      <div class="row">
-        <button class="btn primary" type="submit">บันทึกการตั้งค่า</button>
-      </div>
-    </form>
-
-    <hr style="border:none;border-top:1px solid rgba(255,255,255,.12);margin:18px 0">
 
     <!-- ===== Images ===== -->
     <div class="grid">
