@@ -302,6 +302,15 @@ app.post(
   }
 );
 
+app.get("/admin/site", requireAdmin, async (req, res) => {
+  const SITE = await db.get(
+    "SELECT * FROM site_settings LIMIT 1"
+  );
+
+  res.render("admin/site", {
+    SITE
+  });
+});
 
 
 /* ================= Start ================= */
