@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ตั้งค่าเว็บไซต์</title>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --text:#e7eefc;
+      --muted:#97a3b6;
+      --line: rgba(255,255,255,.12);
+      --radius:14px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      padding:18px;
+      font-family: ui-sans-serif, system-ui, "Noto Sans Thai", Arial;
+      color:var(--text);
+      background: linear-gradient(180deg,#070c17,var(--bg));
+    }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width: 960px; margin:0 auto; }
+    .btn{
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+    .btn:hover{ background: rgba(255,255,255,.08); }
+    .card{
+      margin-top:14px;
+      padding:16px;
+      border-radius:var(--radius);
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+    }
+    label{
+      display:block;
+      margin:12px 0 6px;
+      font-size:13px;
+      color:var(--muted);
+    }
+    input{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      outline:none;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:8px;
+      align-items:end;
+    }
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:6px;
+    }
+    hr{
+      border:none;
+      border-top:1px solid var(--line);
+      margin:18px 0;
+    }
+
+    /* ===== Media Modal ===== */
+    #mediaModal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.65);
+      z-index:9999;
+      align-items:center;
+      justify-content:center;
+    }
+    #mediaModal .box{
+      background:#0b1220;
+      width:90%;
+      max-width:820px;
+      max-height:80vh;
+      overflow:auto;
+      border-radius:14px;
+      padding:16px;
+    }
+    #mediaGrid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:repeat(auto-fill,140px);
+      gap:12px;
+    }
+    #mediaGrid img{
+      width:100%;
+      height:100px;
+      object-fit:cover;
+      border-radius:8px;
+      cursor:pointer;
+      border:1px solid var(--line);
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
+    <div>
+      <h1 style="margin:0;">⚙ ตั้งค่าเว็บไซต์</h1>
+      <div class="small">
+        <a href="/admin/posts">← กลับหลังบ้าน</a> •
+        <a href="/" target="_blank">ดูหน้าเว็บ</a>
+      </div>
+    </div>
+    <form method="post" action="/admin/logout">
+      <button class="btn">ออกจากระบบ</button>
+    </form>
+  </div>
+
+  <!-- ===== Site Settings ===== -->
+  <form method="post" action="/admin/site/save">
+    <div class="card">
+
+      <h3 style="margin-top:0;">🖼 โฆษณาก่อนสารบัญ</h3>
+
+      <!-- Ad Image -->
+      <label>รูปภาพโฆษณา (แนะนำ 1200 × 300 px)</label>
+      <div class="row">
+        <input
+          id="ad_image_url"
+          name="ad_image_url"
+          value="<%= SITE.ad_image_url || '' %>"
+          placeholder="/uploads/ads/ad-01.jpg"
+        />
+        <button type="button" class="btn" onclick="openMedia()">📁 เลือกรูป</button>
+      </div>
+      <div class="small">
+        • ลบข้อความในช่องนี้ = ปิดโฆษณา<br>
+        • รองรับ JPG / PNG
+      </div>
+
+      <!-- Ad Link -->
+      <label>ลิงก์ปลายทาง (คลิกแล้วไปที่)</label>
+      <input
+        name="ad_link_url"
+        value="<%= SITE.ad_link_url || '' %>"
+        placeholder="https://example.com"
+      />
+
+      <hr>
+
+      <button class="btn">💾 บันทึกการตั้งค่า</button>
+
+    </div>
+  </form>
+
+</div>
+
+<!-- ===== Media Modal ===== -->
+<div id="mediaModal">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h3 style="margin:0;">เลือกภาพโฆษณา</h3>
+      <button class="btn" onclick="closeMedia()">✕</button>
+    </div>
+
+    <div id="mediaGrid">กำลังโหลด...</div>
+  </div>
+</div>
+
+<script>
+async function openMedia(){
+  const modal = document.getElementById("mediaModal");
+  const grid  = document.getElementById("mediaGrid");
+
+  modal.style.display = "flex";
+  grid.innerHTML = "กำลังโหลด...";
+
+  const res = await fetch("/admin/media/json");
+  const files = await res.json();
+
+  grid.innerHTML = "";
+  files.forEach(f => {
+    const img = document.createElement("img");
+    img.src = f.url;
+    img.title = f.original_name;
+    img.onclick = () => {
+      document.getElementById("ad_image_url").value = f.url;
+      closeMedia();
+    };
+    grid.appendChild(img);
+  });
+}
+
+function closeMedia(){
+  document.getElementById("mediaModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>
