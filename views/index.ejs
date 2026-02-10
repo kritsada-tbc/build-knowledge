@@ -36,117 +36,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/public/theme.css">
-  <style>
 
-    
-  
-
-
-
-  :root{
-  /* ===== colors from admin (ของเดิม) ===== */
-  --bg: <%= SITE.theme_bg || "#ffffff" %>;
-  --card: <%= SITE.theme_card || "#f7fafc" %>;
-  --text: <%= SITE.theme_text || "#0f172a" %>;
-  --muted: <%= SITE.theme_muted || "#475569" %>;
-  --line: <%= SITE.theme_line || "#dbe3ef" %>;
-  --accent: <%= SITE.theme_accent || "#1d4ed8" %>;
-  --accent2: <%= SITE.theme_accent2 || "#0b2a6f" %>;
-
-  /* ===== semantic colors (เพิ่มใหม่) ===== */
-  --bg-main: var(--bg);          /* พื้นหลังหลัก */
-  --bg-soft: #f1f5ff;            /* พื้นแบ่งหมวด (คงที่ได้) */
-
-  --heading: var(--accent2);     /* หัวข้อใหญ่ */
-  --link: var(--accent);         /* ลิงก์ / ปุ่ม */
-  --border-strong: var(--accent);/* เส้นแบ่งสำคัญ */
-  --border-soft: var(--line);    /* เส้นทั่วไป */
-  }
-
-  /* ===== Tool Card ===== */
-.tool-card{
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-
-  /* ขอบน้ำเงินเข้มกว่า */
-  border: 2px solid var(--accent2);
-}
-
-
-/* header */
-.tool-header h3{
-  margin: 0;
-  color: var(--heading);
-}
-
-.tool-header p{
-  margin: 4px 0 0;
-  color: var(--muted);
-  font-size: 14px;
-}
-
-/* form */
-.tool-form{
-  margin-top: var(--space-md);
-  display: grid;
-  gap: var(--space-sm);
-}
-
-.tool-form label{
-  font-size: 14px;
-  color: var(--text);
-}
-
-.tool-form input,
-.tool-form select{
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border-soft);
-}
-
-/* result */
-.tool-result{
-  margin-top: var(--space-md);
-  padding-top: var(--space-md);
-  border-top: 1px dashed var(--border-soft);
-}
-
-.tool-result b{
-  color: var(--heading);
-}
-
-/* note */
-.tool-note{
-  margin-top: var(--space-sm);
-  font-size: 13px;
-  color: var(--muted);
-}
-
-  .site-footer{
-  margin-top: var(--space-xl);
-  padding: var(--space-lg) 0;
-  border-top: 1px solid var(--border-soft);
-  background: var(--bg-main);
-}
-
-.footer-admin{
-  text-align: right;
-}
-
-.footer-admin a{
-  font-size: 12px;
-  color: var(--muted);
-  text-decoration: none;
-}
-
-.footer-admin a:hover{
-  color: var(--accent);
-  text-decoration: underline;
-}
-
-
-  </style>
   <title><%= page %></title>
   <meta name="description" content="<%= SITE.meta_description || 'งานก่อสร้าง เพื่อการพัฒนาเมือง' %>" />
 
@@ -549,33 +439,31 @@
      Mobile UI (≤ 768px)
      ================================ */
     @media (max-width: 768px){
-     /* mobile styles here */
-    @media (max-width: 768px){
-    section{
+
+  section{
     padding: var(--space-lg) 0;
   }
-    @media (max-width: 768px){
+
   body{
     font-size: 16px;
     line-height: 1.7;
   }
 
-  h1{
-    font-size: 1.7rem;
+  h1{ font-size: 1.7rem; }
+  h2{ font-size: 1.25rem; }
+  h3{ font-size: 1.1rem; }
+
+  .card::before,
+  .tool-card::before{
+    height: 3px;
   }
 
-  h2{
-    font-size: 1.25rem;
-  }
-
-  h3{
-    font-size: 1.1rem;
+  .card,
+  .tool-card{
+    border-width: 1.5px;
   }
 }
 
-}
-
-}
 
 @media (max-width: 768px){
   .card::before{
